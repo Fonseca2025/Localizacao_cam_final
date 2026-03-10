@@ -106,9 +106,9 @@
     <div class="categories">
         <button class="pill active" onclick="filtrarCat('TUDO', this)">TUDO</button>
         <button class="pill" onclick="filtrarCat('CENTRO', this)">CENTRO</button>
+        <button class="pill" onclick="filtrarCat('BAIRRO', this)">BAIRROS</button>
         <button class="pill" onclick="filtrarCat('TREVO', this)">TREVOS</button>
         <button class="pill" onclick="filtrarCat('SAÍDA', this)">SAÍDAS</button>
-        <button class="pill" onclick="filtrarCat('BAIRRO', this)">BAIRRO</button>
     </div>
 </header>
 
@@ -211,7 +211,7 @@
 
     function render() {
         let html = '';
-        const totalCameras = Object.keys(cameras).length; // Pega automaticamente a quantidade total
+        const totalCameras = Object.keys(cameras).length; 
         for (let i = 1; i <= totalCameras; i++) {
             if(cameras[i]) {
                 html += `<button class="btn" data-cat="${cameras[i].c}" data-loc="${cameras[i].l}" onclick="ver(${i})">${i}</button>`;
@@ -223,30 +223,24 @@
     function ver(id) {
         if (navigator.vibrate) navigator.vibrate(50);
         const cam = cameras[id];
-        document.getElementById('modal-text').innerText = cam.l; // Aqui é onde o nome do local é exibido
-        // O LINK AGORA USA A COORDENADA GPS EXATA
+        document.getElementById('modal-text').innerText = cam.l; 
         document.getElementById('maps-url').href = "https://www.google.com/maps/search/?api=1&query=" + cam.g;
         document.getElementById('modal').style.display = "flex";
     }
 
     function fechar() { 
         document.getElementById('modal').style.display = "none"; 
-        // Reseta texto do botão de copiar ao fechar
         const btn = document.getElementById('copy-btn');
         btn.innerHTML = '📋 COPIAR LOCAL';
         btn.style.background = 'var(--azul-logo)';
     }
 
-    // NOVA FUNÇÃO: Copia APENAS a descrição do local (ex: Rua simeao ribeiro x lafeta) para a área de transferência
     function copiarEndereco() {
-        // Agora ele pega o texto da div 'modal-text' em vez do link do mapa
         const textoLocal = document.getElementById('modal-text').innerText;
         
-        // Verifica se a Clipboard API está disponível e a usa, senão usa um método alternativo
         if (navigator.clipboard) {
             navigator.clipboard.writeText(textoLocal).then(sucessoCopia).catch(erroCopia);
         } else {
-            // Fallback para navegadores mais antigos ou webviews
             const textArea = document.createElement("textarea");
             textArea.value = textoLocal;
             document.body.appendChild(textArea);
@@ -266,7 +260,6 @@
         btn.innerHTML = '✅ COPIADO!';
         btn.style.background = 'var(--verde-maps)';
         
-        // Volta ao normal depois de 2 segundos
         setTimeout(() => {
             btn.innerHTML = '📋 COPIAR LOCAL';
             btn.style.background = 'var(--azul-logo)';
@@ -299,5 +292,3 @@
 </script>
 </body>
 </html>
-
-
