@@ -12,7 +12,7 @@
             --azul-logo: #2D46B9;
             --amarelo-logo: #E9C143;
             --verde-maps: #34a853;
-            --bg: #f2f2f7; /* Cor padrão iOS/Android */
+            --bg: #f2f2f7; 
             --card: rgba(255, 255, 255, 0.8);
             --texto: #1c1c1e;
             --safe-top: env(safe-area-inset-top);
@@ -33,12 +33,10 @@
             background-color: var(--bg); 
             margin: 0; 
             color: var(--texto);
-            /* Padding ajustado para o novo header integrado */
             padding-top: calc(var(--safe-top) + 180px); 
             padding-bottom: 40px;
         }
 
-        /* HEADER INTEGRADO AO FUNDO */
         header { 
             background: var(--card);
             backdrop-filter: blur(25px);
@@ -48,7 +46,6 @@
             width: 100%; 
             z-index: 1000;
             padding-top: var(--safe-top);
-            /* Sombra bem leve para não separar muito do fundo */
             box-shadow: 0 1px 0 rgba(0,0,0,0.05);
         }
 
@@ -60,7 +57,6 @@
             padding: 5px 0;
         }
 
-        /* Logo sem bordas ou fundo branco sólido */
         .logo-container {
             padding: 10px 0 5px;
             width: 100%;
@@ -71,7 +67,6 @@
         .logo-img { 
             height: 55px; 
             width: auto; 
-            /* Sombra suave para dar profundidade sobre o fundo desfocado */
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
@@ -92,7 +87,6 @@
             outline: none;
         }
 
-        /* CATEGORIAS EM CARROSSEL */
         .categories {
             display: flex; 
             overflow-x: auto; 
@@ -121,7 +115,6 @@
             box-shadow: 0 2px 8px rgba(45, 70, 185, 0.3);
         }
 
-        /* GRID DE BOTÕES */
         .grid {
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
@@ -131,10 +124,11 @@
             margin: 0 auto;
         }
 
+        /* BOTÃO: FUNDO BRANCO E NÚMERO AZUL */
         .btn {
             aspect-ratio: 1/1; 
             background: #ffffff; 
-            border: none;
+            border: 1px solid rgba(0,0,0,0.1);
             border-radius: 18px; 
             font-size: 24px; 
             font-weight: 700; 
@@ -148,7 +142,6 @@
 
         .btn:active { transform: scale(0.9); background-color: #f2f2f7; }
 
-        /* MODAL ESTILO DRAWER */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 2000; 
@@ -187,7 +180,6 @@
 
         .hidden { display: none !important; }
 
-        /* AJUSTE DESKTOP/TABLET */
         @media (min-width: 600px) {
             #modal { align-items: center; }
             .modal-box { border-radius: 25px; width: 90%; max-width: 400px; margin-bottom: 0; }
@@ -236,51 +228,51 @@
         2: {l: "PCA DR CARLOS FRENTE COPASA", c: "CENTRO", g: "-16.7233637,-43.8653465"},
         3: {l: "RUA DR. SANTOS X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7240059,-43.8653894"},
         4: {l: "RUA DR. SANTOS X RUA D. PEDRO II", c: "CENTRO", g: "-16.7249911,-43.8656682"},
-        5: {l: "RUA DR. SANTOS X RUAD. JOÃO PIMENTA", c: "CENTRO", g: "-16.7264145,-43.8659132"},
+        5: {l: "RUA DR. SANTOS X RUA D. JOÃO PIMENTA", c: "CENTRO", g: "-16.7264145,-43.8659132"},
         6: {l: "PRAÇA CEL. RIBEIRO", c: "CENTRO", g: "-16.7271019,-43.8667055"},
         7: {l: "RUA CAMILO P. X RUA D. PEDRO II", c: "CENTRO", g: "-16.72495,-43.8662154"},
         8: {l: "RUA CAMILO P. X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7237787,-43.8660667"},
         9: {l: "PCA DR CARLOS", c: "CENTRO", g: "-16.7225366,-43.8658159"},
-        10: {l: "RUA SÃO FRANC. X RUA GOV. VALADARES", c: "CENTRO", g: "-16.7228943,-43.8642814"},
-        11: {l: "RUA SÃO FRANC. X RUA CEL. ANT. D. ANJOS", c: "CENTRO", g: "-16.7233002,-43.864411"},
-        12: {l: "RUA SÃO FRANC. X RUA RUI BARBOSA", c: "CENTRO", g: "-16.7236155,-43.8644671"},
-        13: {l: "RUA SÃO FRANC. X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7241608,-43.8645747"},
-        14: {l: "RUA SÃO FRANC. X RUA D. PEDRO II", c: "CENTRO", g: "-16.7252069,-43.8647858"},
+        10: {l: "RUA SÃO FRANCISCO. X RUA GOV. VALADARES", c: "CENTRO", g: "-16.7228943,-43.8642814"},
+        11: {l: "RUA SÃO FRANCISCO. X RUA CEL. ANT. D. ANJOS", c: "CENTRO", g: "-16.7233002,-43.864411"},
+        12: {l: "RUA SÃO FRANCISCO. X RUA RUI BARBOSA", c: "CENTRO", g: "-16.7236155,-43.8644671"},
+        13: {l: "RUA SÃO FRANCISCO. X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7241608,-43.8645747"},
+        14: {l: "RUA SÃO FRANCISCO. X RUA D. PEDRO II", c: "CENTRO", g: "-16.7252069,-43.8647858"},
         15: {l: "PCA PIO XII - CATEDRAL", c: "CENTRO", g: "-16.7254708,-43.8635566"},
         16: {l: "RUA JUCA PRATES X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.724295,-43.8639704"},
-        17: {l: "RUA CEL JOAQUIM COSTA X RUA CEL. ANT. D. ANJOS", c: "CENTRO", g: "-16.7233586,-43.8637892"},
-        18: {l: "RUA CEL JOAQ COSTA X RUA VISC. DE OURO PRETO", c: "CENTRO", g: "-16.7225996,-43.8635439"},
-        19: {l: "AV. OSV. CRUZ X PADRE CHICO", c: "OUTROS", g: "-16.7214043,-43.8633808"},
-        20: {l: "AV. DULCE SARM. X FLAM. WANDERLEY", c: "OUTROS", g: "-16.7186891,-43.8597422"},
-        21: {l: "AV. DULCE SARM. X SEB DIAS SOARES", c: "OUTROS", g: "-16.7184532,-43.856777"},
-        22: {l: "AV. DULCE SARM. X FLORIANO NEIVA", c: "OUTROS", g: "-16.7184455,-43.8541109"},
-        23: {l: "AV. GERALDO ATHAIDE X AV. ESTEVES RODRIGUES", c: "OUTROS", g: "-16.7177714,-43.8594945"},
-        24: {l: "AV. GER ATHAIDE X RUA CEL JOSE ALVES", c: "OUTROS", g: "-16.7164379,-43.8580461"},
-        25: {l: "AV. GER ATHAIDE (CASA LOTERICA)", c: "OUTROS", g: "-16.71552279,-43.8563751"},
+        17: {l: "RUA CEL JOAQUIM COSTA X RUA CEL. ANT. DOS ANJOS", c: "CENTRO", g: "-16.7233586,-43.8637892"},
+        18: {l: "RUA CEL JOAQUIM COSTA X RUA VISC. DE OURO PRETO", c: "CENTRO", g: "-16.7225996,-43.8635439"},
+        19: {l: "AV. OSV. CRUZ X PADRE CHICO", c: "CENTRO", g: "-16.7214043,-43.8633808"},
+        20: {l: "AV. DULCE SARMENTO. X FLAM. WANDERLEY", c: "BAIRRO", g: "-16.7186891,-43.8597422"},
+        21: {l: "AV. DULCE SARMENTO. X SEB DIAS SOARES", c: "BAIRRO", g: "-16.7184532,-43.856777"},
+        22: {l: "AV. DULCE SARMENTO. X FLORIANO NEIVA", c: "BAIRRO", g: "-16.7184455,-43.8541109"},
+        23: {l: "AV. GERALDO ATHAIDE X AV. ESTEVES RODRIGUES", c: "BAIRRO", g: "-16.7177714,-43.8594945"},
+        24: {l: "AV. GER ATHAIDE X RUA CEL JOSE ALVES", c: "BAIRRO", g: "-16.7164379,-43.8580461"},
+        25: {l: "AV. GER ATHAIDE (CASA LOTERICA)", c: "BAIRRO", g: "-16.71552279,-43.8563751"},
         26: {l: "RUA SÃO FRANCISCO X RUA VISCONDE DE OURO PRETO", c: "CENTRO", g: "-16.72243590296203,-43.86421571530572"},
         27: {l: "PRAÇA MATRIZ PROX BABI", c: "CENTRO", g: "-16.7211986,-43.865807"},
-        28: {l: "RUA  FLORIA. NEIVA X RUA JUST. CÂMARA", c: "OUTROS", g: "-16.7205835,-43.8655594"},
-        29: {l: "AV. ARMENIO VELOSO X AV. FILOMENO RIBEIRO (PRACA DE ESPORTES)", c: "OUTROS", g: "-16.7209947,-43.8644949"},
-        30: {l: "RUA PE. TEIXEIRA X AV. ARMENIO VELOSO (PRACA DE ESPORTES)", c: "OUTROS", g: "-16.7189659,-43.8632874"},
-        31: {l: "RUA MARECHAL DEODORO X AV. ARTUR BERNARDES", c: "OUTROS", g: "-16.7176466,-43.8631855"},
-        32: {l: "AV. DEP. ESTEVES RODR X JOAO XXIII", c: "OUTROS", g: "-16.715677,-43.8633562"},
-        33: {l: "AV. JOAO XXIII ANTIGA UAI", c: "OUTROS", g: "-16.7137079,-43.8637346"},
-        34: {l: "AV. JOAO XXIII X AV. PRESIDENTE KENNEDY", c: "OUTROS", g: "-16.7092412,-43.8654801"},
+        28: {l: "RUA  FLORIA. NEIVA X RUA JUST. CÂMARA", c: "CENTRO", g: "-16.7205835,-43.8655594"},
+        29: {l: "AV. ARMENIO VELOSO X AV. FILOMENO RIBEIRO (PRACA DE ESPORTES)", c: "CENTRO", g: "-16.7209947,-43.8644949"},
+        30: {l: "RUA PE. TEIXEIRA X AV. ARMENIO VELOSO (PRACA DE ESPORTES)", c: "CENTRO", g: "-16.7189659,-43.8632874"},
+        31: {l: "RUA MARECHAL DEODORO X AV. ARTUR BERNARDES", c: "CENTRO", g: "-16.7176466,-43.8631855"},
+        32: {l: "AV. DEP. ESTEVES RODR X JOAO XXIII", c: "BAIRRO", g: "-16.715677,-43.8633562"},
+        33: {l: "AV. JOAO XXIII ANTIGA UAI", c: "BAIRRO", g: "-16.7137079,-43.8637346"},
+        34: {l: "AV. JOAO XXIII X AV. PRESIDENTE KENNEDY", c: "BAIRRO", g: "-16.7092412,-43.8654801"},
         35: {l: "AV. DOUTOR VELOSO X DOM PEDRO II", c: "CENTRO", g: "-16.7247872,-43.8670288"},
         36: {l: "AV. PRES. VARGAS X RUA DOUTOR VELOSO", c: "CENTRO", g: "-16.7232801,-43.8667716"},
         37: {l: "AV. GOV. VALAD. X AV. CEL. PRATES", c: "CENTRO", g: "-16.7223919,-43.8669699"},
         38: {l: "RUA SIMEAO RIBEIRO X RUA ALT FREITAS", c: "CENTRO", g: "-16.7224725,-43.8662136"},
         39: {l: "RUA SIMEAO RIBEIRO X RUA LAFETA", c: "CENTRO", g: "-16.7219834,-43.8661073"},
-        40: {l: "AV.SANTA MARIA X RUA GONC FIGUEIRA", c: "OUTROS", g: "-16.7209822,-43.866872"},
-        41: {l: "RUA SANTA MARIA X AV. DEP ESTEVES RODRIGUES", c: "OUTROS", g: "-16.720182,-43.869157"},
-        42: {l: "AV. DEP EST. RODRIGUES -  CASA DA ESFIRRA", c: "OUTROS", g: "-16.7218961,-43.8718478"},
-        43: {l: "RUA SANTA MARIA X RUA SANTO ANTONIO", c: "OUTROS", g: "-16.7177068,-43.8738467"},
-        44: {l: "RUA BAR. RIO BRANCO X AV. AFONSO PENA", c: "CENTRO", g: "-16.7264486,-43.8693346"},
+        40: {l: "AV.SANTA MARIA X RUA GONC FIGUEIRA", c: "CENTRO", g: "-16.7209822,-43.866872"},
+        41: {l: "RUA SANTA MARIA X AV. DEP ESTEVES RODRIGUES", c: "CENTRO", g: "-16.720182,-43.869157"},
+        42: {l: "AV. DEP EST. RODRIGUES -  CASA DA ESFIRRA", c: "CENTRO", g: "-16.7218961,-43.8718478"},
+        43: {l: "RUA SANTA MARIA X RUA SANTO ANTONIO", c: "BAIRRO", g: "-16.7177068,-43.8738467"},
+        44: {l: "RUA BARÃO DO RIO BRANCO X AV. AFONSO PENA", c: "CENTRO", g: "-16.7264486,-43.8693346"},
         45: {l: "AV. CEL PRATES PRAÇA STA CASA", c: "CENTRO", g: "-16.725157,-43.8699223"},
-        46: {l: "ALL TIME", c: "OUTROS", g: "-16.7275085,-43.8724411"},
-        47: {l: "AV. DEP EST. RODRIGUES X PREFEITURA ANTIGA", c: "OUTROS", g: "-16.7302097,-43.870764"},
-        48: {l: "AV. CULA MANGABEIRA - HOSPITAL UNIVERSITARIO", c: "OUTROS", g: "-16.7333356,-43.8721867"},
-        49: {l: "AV. CULA MANGABEIRA X RUA JOAO REBELO", c: "OUTROS", g: "-16.7370395,-43.872122"},
+        46: {l: "ALL TIME", c: "CENTRO", g: "-16.7275085,-43.8724411"},
+        47: {l: "AV. DEP EST. RODRIGUES X PREFEITURA ANTIGA", c: "BAIRRO", g: "-16.7302097,-43.870764"},
+        48: {l: "AV. CULA MANGABEIRA - HOSPITAL UNIVERSITARIO", c: "BAIRRO", g: "-16.7333356,-43.8721867"},
+        49: {l: "AV. CULA MANGABEIRA X RUA JOAO REBELO", c: "BAIRRO", g: "-16.7370395,-43.872122"},
         50: {l: "TREVO RODOVIARIA BANCO BRASIL", c: "BAIRRO", g: "-16.7399357,-43.8718982"},
         51: {l: "RODOVIARIA DROGASIL", c: "BAIRRO", g: "-16.7416469,-43.8681328"},
         52: {l: "AV. FCO GAETANI X CASTELAR PRATES", c: "BAIRRO", g: "-16.7508975,-43.8787849"},
