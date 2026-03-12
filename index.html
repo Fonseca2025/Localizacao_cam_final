@@ -12,8 +12,8 @@
             --azul-logo: #2D46B9;
             --amarelo-logo: #E9C143;
             --verde-maps: #34a853;
-            --bg: #f2f2f7;
-            --card: #ffffff;
+            --bg: #f2f2f7; /* Cor padrão iOS/Android */
+            --card: rgba(255, 255, 255, 0.8);
             --texto: #1c1c1e;
             --safe-top: env(safe-area-inset-top);
         }
@@ -21,7 +21,7 @@
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg: #000000;
-                --card: #1c1c1e;
+                --card: rgba(28, 28, 30, 0.8);
                 --texto: #ffffff;
             }
         }
@@ -33,69 +33,122 @@
             background-color: var(--bg); 
             margin: 0; 
             color: var(--texto);
-            /* Ajuste dinâmico do padding superior */
-            padding-top: calc(var(--safe-top) + 170px); 
+            /* Padding ajustado para o novo header integrado */
+            padding-top: calc(var(--safe-top) + 180px); 
             padding-bottom: 40px;
         }
 
-        /* HEADER RESPONSIVO */
+        /* HEADER INTEGRADO AO FUNDO */
         header { 
-            background: rgba(var(--card), 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: var(--card);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            z-index: 1000;
             padding-top: var(--safe-top);
-            border-bottom: 0.5px solid rgba(0,0,0,0.1);
+            /* Sombra bem leve para não separar muito do fundo */
+            box-shadow: 0 1px 0 rgba(0,0,0,0.05);
         }
 
-        .header-top {
+        .header-content {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 10px;
+            width: 100%;
+            padding: 5px 0;
         }
 
-        .logo-img { height: 50px; width: auto; max-width: 100%; }
+        /* Logo sem bordas ou fundo branco sólido */
+        .logo-container {
+            padding: 10px 0 5px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
 
-        .search-container { padding: 5px 15px 10px; }
+        .logo-img { 
+            height: 55px; 
+            width: auto; 
+            /* Sombra suave para dar profundidade sobre o fundo desfocado */
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .search-container { 
+            padding: 5px 15px 10px; 
+            width: 100%; 
+            max-width: 500px;
+        }
+
         #searchBar {
-            width: 100%; padding: 12px 15px; border-radius: 12px;
-            border: none; background: rgba(120, 120, 128, 0.12); 
-            font-size: 16px; color: var(--texto); outline: none;
+            width: 100%; 
+            padding: 12px 15px; 
+            border-radius: 12px;
+            border: none; 
+            background: rgba(120, 120, 128, 0.12); 
+            font-size: 16px; 
+            color: var(--texto); 
+            outline: none;
         }
 
         /* CATEGORIAS EM CARROSSEL */
         .categories {
-            display: flex; overflow-x: auto; padding: 5px 15px 15px; gap: 8px;
-            scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            display: flex; 
+            overflow-x: auto; 
+            padding: 5px 15px 15px; 
+            gap: 8px;
+            scrollbar-width: none; 
+            width: 100%;
+            max-width: 500px;
         }
         .categories::-webkit-scrollbar { display: none; }
-        .pill {
-            padding: 8px 16px; border-radius: 20px; background: rgba(120, 120, 128, 0.16);
-            border: none; color: var(--azul-logo); font-size: 13px; font-weight: 600;
-            white-space: nowrap; transition: 0.2s;
-        }
-        .pill.active { background: var(--azul-logo); color: white; }
 
-        /* GRID FLEXÍVEL (RESPONSIVIDADE AUTOMÁTICA) */
+        .pill {
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            background: rgba(120, 120, 128, 0.16);
+            border: none; 
+            color: var(--azul-logo); 
+            font-size: 13px; 
+            font-weight: 700;
+            white-space: nowrap; 
+            transition: all 0.2s;
+        }
+        .pill.active { 
+            background: var(--azul-logo); 
+            color: white; 
+            box-shadow: 0 2px 8px rgba(45, 70, 185, 0.3);
+        }
+
+        /* GRID DE BOTÕES */
         .grid {
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
-            gap: 12px; padding: 0 15px;
-            max-width: 800px; margin: 0 auto;
+            gap: 12px; 
+            padding: 0 15px;
+            max-width: 800px; 
+            margin: 0 auto;
         }
 
         .btn {
-            aspect-ratio: 1/1; background: var(--card); border: none;
-            border-radius: 16px; font-size: 24px; font-weight: 700; color: var(--azul-logo);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            display: flex; align-items: center; justify-content: center;
-            transition: transform 0.1s, background-color 0.1s;
+            aspect-ratio: 1/1; 
+            background: #ffffff; 
+            border: none;
+            border-radius: 18px; 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: var(--azul-logo);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            transition: transform 0.1s;
         }
 
-        .btn:active { transform: scale(0.9); background-color: #d1d1d6; }
+        .btn:active { transform: scale(0.9); background-color: #f2f2f7; }
 
-        /* MODAL ESTILO "DRAWER" (SOBE DE BAIXO) */
+        /* MODAL ESTILO DRAWER */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 2000; 
@@ -103,10 +156,12 @@
         }
 
         .modal-box {
-            background: var(--card); width: 100%; max-width: 500px; 
+            background: white; 
+            width: 100%; 
+            max-width: 500px; 
             padding: 20px 20px calc(30px + env(safe-area-inset-bottom));
-            border-radius: 25px 25px 0 0; text-align: center;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            border-radius: 25px 25px 0 0; 
+            text-align: center;
             animation: slideUp 0.3s ease-out;
         }
 
@@ -115,58 +170,60 @@
             to { transform: translateY(0); }
         }
 
-        #modal-title { font-size: 12px; color: #8e8e93; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
-        #modal-text { font-size: 18px; font-weight: 800; margin-bottom: 20px; line-height: 1.4; }
+        #modal-title { font-size: 11px; color: #8e8e93; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
+        #modal-text { font-size: 18px; font-weight: 800; margin-bottom: 25px; line-height: 1.4; color: #000; }
         
         .action-buttons { display: flex; flex-direction: column; gap: 10px; }
 
         .maps-link, .copy-btn {
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            text-decoration: none; padding: 16px; border-radius: 14px; 
-            font-weight: 700; font-size: 15px; border: none; cursor: pointer; width: 100%;
+            text-decoration: none; padding: 16px; border-radius: 16px; 
+            font-weight: 700; font-size: 15px; border: none; cursor: pointer;
         }
 
         .maps-link { background: var(--verde-maps); color: white; }
         .copy-btn { background: var(--azul-logo); color: white; }
-        .close-btn { background: transparent; color: #8e8e93; padding: 10px; border: none; font-weight: 600; margin-top: 10px; }
+        .close-btn { background: transparent; color: #8e8e93; padding: 10px; border: none; font-weight: 600; margin-top: 5px; }
 
         .hidden { display: none !important; }
 
-        /* AJUSTES PARA TABLETS/DESKTOP */
+        /* AJUSTE DESKTOP/TABLET */
         @media (min-width: 600px) {
             #modal { align-items: center; }
-            .modal-box { border-radius: 25px; width: 90%; margin-bottom: 0; }
-            body { padding-top: 180px; }
+            .modal-box { border-radius: 25px; width: 90%; max-width: 400px; margin-bottom: 0; }
+            body { padding-top: 190px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="header-top">
-        <img src="logo.png" alt="Logo" class="logo-img">
-    </div>
-    <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Pesquisar nº ou rua..." onkeyup="filtrar()">
-    </div>
-    <div class="categories">
-        <button class="pill active" onclick="filtrarCat('TUDO', this)">TUDO</button>
-        <button class="pill" onclick="filtrarCat('CENTRO', this)">CENTRO</button>
-        <button class="pill" onclick="filtrarCat('BAIRRO', this)">BAIRROS</button>
-        <button class="pill" onclick="filtrarCat('TREVO', this)">TREVOS</button>
-        <button class="pill" onclick="filtrarCat('SAÍDA', this)">SAÍDAS</button>
+    <div class="header-content">
+        <div class="logo-container">
+            <img src="logo.png" alt="Guardiã dos Montes" class="logo-img">
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchBar" placeholder="Pesquisar nº ou rua..." onkeyup="filtrar()">
+        </div>
+        <div class="categories">
+            <button class="pill active" onclick="filtrarCat('TUDO', this)">TUDO</button>
+            <button class="pill" onclick="filtrarCat('CENTRO', this)">CENTRO</button>
+            <button class="pill" onclick="filtrarCat('BAIRRO', this)">BAIRROS</button>
+            <button class="pill" onclick="filtrarCat('TREVO', this)">TREVOS</button>
+            <button class="pill" onclick="filtrarCat('SAÍDA', this)">SAÍDAS</button>
+        </div>
     </div>
 </header>
 
 <div class="grid" id="mainGrid"></div>
 
 <div id="modal" onclick="fecharFora(event)">
-    <div class="modal-box">
-        <div style="width: 40px; height: 5px; background: #ddd; border-radius: 5px; margin: 0 auto 15px;"></div>
-        <div id="modal-title">DETALHES DA CÂMERA</div>
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div style="width: 35px; height: 5px; background: #e5e5ea; border-radius: 5px; margin: 0 auto 20px;"></div>
+        <div id="modal-title">Detalhes da Localização</div>
         <div id="modal-text"></div>
         <div class="action-buttons">
-            <a id="maps-url" href="" target="_blank" class="maps-link">📍 ABRIR NO GOOGLE MAPS</a>
+            <a id="maps-url" href="" target="_blank" class="maps-link">📍 VER NO GOOGLE MAPS</a>
             <button id="copy-btn" class="copy-btn" onclick="copiarEndereco()">📋 COPIAR ENDEREÇO</button>
             <button class="close-btn" onclick="fechar()">FECHAR</button>
         </div>
