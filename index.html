@@ -308,15 +308,15 @@
 
     const grid = document.getElementById('mainGrid');
 
-    function render() {
-        let html = '';
-        Object.keys(cameras).forEach(id => {
-            html += `<button class="btn" data-cat="${cameras[id].c}" data-loc="${cameras[id].l}" onclick="ver(${id})">${id}</button>`;
-        });
-        grid.innerHTML = html;
-    }
+function render() {
+    let html = '';
+    Object.keys(cameras).forEach(id => {
+        html += `<button class="btn" data-cat="${cameras[id].c}" data-loc="${cameras[id].l}" onclick="ver(${id})">${id}</button>`;
+    });
+    grid.innerHTML = html;
+}
 
-    function ver(id) {
+function ver(id) {
         if (navigator.vibrate) navigator.vibrate(50);
         const cam = cameras[id];
         document.getElementById('modal-text').innerText = cam.l; 
