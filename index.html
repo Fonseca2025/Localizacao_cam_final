@@ -71,7 +71,7 @@
         .pill {
             padding: 8px 16px; border-radius: 20px; background: white;
             border: 1px solid #ddd; color: var(--azul); font-size: 11px; font-weight: 800;
-            white-space: nowrap; flex-shrink: 0;
+            white-space: nowrap;
         }
         .pill.active { background: var(--azul); color: white; border-color: var(--azul); }
 
@@ -81,11 +81,9 @@
             gap: 12px; padding: 0 15px; max-width: 1200px; margin: 0 auto;
         }
 
-        /* SKELETON LOADERS */
         .skeleton { height: 105px; background: #e5e5ea; border-radius: 16px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-        /* BOTÃO: FUNDO BRANCO, NÚMERO AZUL */
         .btn {
             min-height: 105px;
             background: #ffffff; border: none; border-radius: 18px; 
@@ -104,7 +102,6 @@
 
         .btn:active { transform: scale(0.94); background-color: #e5e5ea; }
 
-        /* MODAL */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 2000; align-items: flex-end; justify-content: center;
@@ -139,7 +136,7 @@
     <div class="search-area">
         <button class="btn-near" onclick="findNearest()" title="MAIS PRÓXIMAS">📍</button>
         <div class="input-wrapper">
-            <input type="text" id="searchBar" placeholder="Nº, APELIDO OU RUA..." onkeyup="handleSearch()">
+            <input type="text" id="searchBar" placeholder="Nº OU RUA..." onkeyup="handleSearch()">
             <button id="clearSearch" onclick="clearSearchBar()">✕</button>
         </div>
     </div>
@@ -170,27 +167,90 @@
 </div>
 
 <script>
-    // BANCO DE DADOS
-    // a = APELIDO (O que aparece no botão)
-    // l = LOCALIZAÇÃO (O que aparece no balão e na cópia)
+    // l = Localização completa (Modal/Cópia)
+    // a = Apelido curto (Aparece no botão embaixo do número)
     const cameras = {
-        1: {a: "MIN. FAZENDA", l: "PCA DR CARLOS FRENTE MIN FAZENDA", c: "CENTRO", g: "-16.722728,-43.865195"},
+        1: {a: "DR CARLOS", l: "PCA DR CARLOS FRENTE MIN FAZENDA", c: "CENTRO", g: "-16.722728,-43.865195"},
         2: {a: "COPASA", l: "PCA DR CARLOS FRENTE COPASA", c: "CENTRO", g: "-16.7233637,-43.8653465"},
-        3: {a: "DR. SANTOS / PE. AUGUSTO", l: "RUA DR. SANTOS X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7240059,-43.8653894"},
-        4: {a: "DR. SANTOS / D. PEDRO II", l: "RUA DR. SANTOS X RUA D. PEDRO II", c: "CENTRO", g: "-16.7249911,-43.8656682"},
-        5: {a: "DR. SANTOS / JOÃO PIMENTA", l: "RUA DR. SANTOS X RUA D. JOÃO PIMENTA", c: "CENTRO", g: "-16.7264145,-43.8659132"},
-        6: {a: "PCA CEL. RIBEIRO", l: "PRAÇA CEL. RIBEIRO", c: "CENTRO", g: "-16.7271019,-43.8667055"},
-        10: {a: "SÃO FRANC / GOV. VALADARES", l: "RUA SÃO FRANCISCO X RUA GOV. VALADARES", c: "CENTRO", g: "-16.7228943,-43.8642814"},
-        26: {a: "SÃO FRANC / VISCONDE", l: "RUA SÃO FRANCISCO X RUA VISCONDE DE OURO PRETO", c: "CENTRO", g: "-16.72243590296203,-43.86421571530572"},
-        63: {a: "PORTICO JURAMENTO", l: "PORTICO (JURAMENTO)", c: "TREVO", g: "-16.749509,-43.828515"},
-        "63.1": {a: "PONTALETE JURAMENTO", l: "PONTALETE (JURAMENTO)", c: "TREVO", g: "-16.749392,-43.828265"},
+        3: {a: "DR. SANTOS", l: "RUA DR. SANTOS X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7240059,-43.8653894"},
+        4: {a: "DR. SANTOS", l: "RUA DR. SANTOS X RUA D. PEDRO II", c: "CENTRO", g: "-16.7249911,-43.8656682"},
+        5: {a: "DR. SANTOS", l: "RUA DR. SANTOS X RUAD. JOÃO PIMENTA", c: "CENTRO", g: "-16.7264145,-43.8659132"},
+        6: {a: "CEL. RIBEIRO", l: "PRAÇA CEL. RIBEIRO", c: "CENTRO", g: "-16.7271019,-43.8667055"},
+        7: {a: "CAMILO P.", l: "RUA CAMILO P. X RUA D. PEDRO II", c: "CENTRO", g: "-16.72495,-43.8662154"},
+        8: {a: "CAMILO P.", l: "RUA CAMILO P. X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7237787,-43.8660667"},
+        9: {a: "DR CARLOS", l: "PCA DR CARLOS", c: "CENTRO", g: "-16.7225366,-43.8658159"},
+        10: {a: "SÃO FRANCISCO", l: "RUA SÃO FRANCISCO. X RUA GOV. VALADARES", c: "CENTRO", g: "-16.7228943,-43.8642814"},
+        11: {a: "SÃO FRANCISCO", l: "RUA SÃO FRANCISCO. X RUA CEL. ANT. D. ANJOS", c: "CENTRO", g: "-16.7233002,-43.864411"},
+        12: {a: "SÃO FRANCISCO", l: "RUA SÃO FRANCISCO. X RUA RUI BARBOSA", c: "CENTRO", g: "-16.7236155,-43.8644671"},
+        13: {a: "SÃO FRANCISCO", l: "RUA SÃO FRANCISCO. X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7241608,-43.8645747"},
+        14: {a: "SÃO FRANCISCO", l: "RUA SÃO FRANCISCO. X RUA D. PEDRO II", c: "CENTRO", g: "-16.7252069,-43.8647858"},
+        15: {a: "CATEDRAL", l: "PCA PIO XII - CATEDRAL", c: "CENTRO", g: "-16.7254708,-43.8635566"},
+        16: {a: "JUCA PRATES", l: "RUA JUCA PRATES X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.724295,-43.8639704"},
+        17: {a: "JOAQUIM COSTA", l: "RUA CEL JOAQUIM COSTA X RUA CEL. ANT. DOS ANJOS", c: "CENTRO", g: "-16.7233586,-43.8637892"},
+        18: {a: "JOAQUIM COSTA", l: "RUA CEL JOAQUIM COSTA X RUA VISC. DE OURO PRETO", c: "CENTRO", g: "-16.7225996,-43.8635439"},
+        19: {a: "OSV. CRUZ", l: "AV. OSV. CRUZ X PADRE CHICO", c: "CENTRO", g: "-16.7214043,-43.8633808"},
+        20: {a: "DULCE SARMENTO", l: "AV. DULCE SARMENTO. X FLAM. WANDERLEY", c: "BAIRRO", g: "-16.7186891,-43.8597422"},
+        21: {a: "DULCE SARMENTO", l: "AV. DULCE SARMENTO. X SEB DIAS SOARES", c: "BAIRRO", g: "-16.7184532,-43.856777"},
+        22: {a: "DULCE SARMENTO", l: "AV. DULCE SARMENTO. X FLORIANO NEIVA", c: "BAIRRO", g: "-16.7184455,-43.8541109"},
+        23: {a: "GERALDO ATHAIDE", l: "AV. GERALDO ATHAIDE X AV. ESTEVES RODRIGUES", c: "BAIRRO", g: "-16.7177714,-43.8594945"},
+        24: {a: "GER ATHAIDE", l: "AV. GER ATHAIDE X RUA CEL JOSE ALVES", c: "BAIRRO", g: "-16.7164379,-43.8580461"},
+        25: {a: "GER ATHAIDE", l: "AV. GER ATHAIDE (CASA LOTERICA)", c: "BAIRRO", g: "-16.71552279,-43.8563751"},
+        26: {a: "SÃO FRANCISCO", l: "RUA SÃO FRANCISCO X RUA VISCONDE DE OURO PRETO", c: "CENTRO", g: "-16.72243590296203,-43.86421571530572"},
+        27: {a: "MATRIZ", l: "PRAÇA MATRIZ PROX BABI", c: "CENTRO", g: "-16.7211986,-43.865807"},
+        28: {a: "FLORIANO NEIVA", l: "RUA  FLORIA. NEIVA X RUA JUST. CÂMARA", c: "CENTRO", g: "-16.7205835,-43.8655594"},
+        29: {a: "ARMENIO VELOSO", l: "AV. ARMENIO VELOSO X AV. FILOMENO RIBEIRO (PRACA DE ESPORTES)", c: "CENTRO", g: "-16.7209947,-43.8644949"},
+        30: {a: "PE. TEIXEIRA", l: "RUA PE. TEIXEIRA X AV. ARMENIO VELOSO (PRACA DE ESPORTES)", c: "CENTRO", g: "-16.7189659,-43.8632874"},
+        31: {a: "MARECHAL DEODORO", l: "RUA MARECHAL DEODORO X AV. ARTUR BERNARDES", c: "CENTRO", g: "-16.7176466,-43.8631855"},
+        32: {a: "ESTEVES RODR", l: "AV. DEP. ESTEVES RODR X JOAO XXIII", c: "BAIRRO", g: "-16.715677,-43.8633562"},
+        33: {a: "JOAO XXIII", l: "AV. JOAO XXIII ANTIGA UAI", c: "BAIRRO", g: "-16.7137079,-43.8637346"},
+        34: {a: "JOAO XXIII", l: "AV. JOAO XXIII X AV. PRESIDENTE KENNEDY", c: "BAIRRO", g: "-16.7092412,-43.8654801"},
+        35: {a: "DR VELOSO", l: "AV. DOUTOR VELOSO X DOM PEDRO II", c: "CENTRO", g: "-16.7247872,-43.8670288"},
+        36: {a: "PRES. VARGAS", l: "AV. PRES. VARGAS X RUA DOUTOR VELOSO", c: "CENTRO", g: "-16.7233586,-43.8667716"},
+        37: {a: "GOV. VALAD.", l: "AV. GOV. VALAD. X AV. CEL. PRATES", c: "CENTRO", g: "-16.7223919,-43.8669699"},
+        38: {a: "SIMEAO RIBEIRO", l: "RUA SIMEAO RIBEIRO X RUA ALT FREITAS", c: "CENTRO", g: "-16.7224725,-43.8662136"},
+        39: {a: "SIMEAO RIBEIRO", l: "RUA SIMEAO RIBEIRO X RUA LAFETA", c: "CENTRO", g: "-16.7219834,-43.8661073"},
+        40: {a: "SANTA MARIA", l: "AV.SANTA MARIA X RUA GONC FIGUEIRA", c: "CENTRO", g: "-16.7209822,-43.866872"},
+        41: {a: "SANTA MARIA", l: "RUA SANTA MARIA X AV. DEP ESTEVES RODRIGUES", c: "CENTRO", g: "-16.720182,-43.869157"},
+        42: {a: "EST. RODRIGUES", l: "AV. DEP EST. RODRIGUES - CASA DA ESFIRRA", c: "CENTRO", g: "-16.7218961,-43.8718478"},
+        43: {a: "SANTA MARIA", l: "RUA SANTA MARIA X RUA SANTO ANTONIO", c: "BAIRRO", g: "-16.7177068,-43.8738467"},
+        44: {a: "BARÃO RIO BRANCO", l: "RUA BARÃO DO RIO BRANCO X AV. AFONSO PENA", c: "CENTRO", g: "-16.7264486,-43.8693346"},
+        45: {a: "PRATES STA CASA", l: "AV. CEL PRATES PRAÇA STA CASA", c: "CENTRO", g: "-16.725157,-43.8699223"},
+        46: {a: "ALL TIME", l: "ALL TIME", c: "CENTRO", g: "-16.7275085,-43.8724411"},
+        47: {a: "EST. RODRIGUES", l: "AV. DEP EST. RODRIGUES X PREFEITURA ANTIGA", c: "BAIRRO", g: "-16.7302097,-43.870764"},
+        48: {a: "CULA MANGABEIRA", l: "AV. CULA MANGABEIRA - HOSPITAL UNIVERSITARIO", c: "BAIRRO", g: "-16.7333356,-43.8721867"},
+        49: {a: "CULA MANGABEIRA", l: "AV. CULA MANGABEIRA X RUA JOAO REBELO", c: "BAIRRO", g: "-16.7370395,-43.872122"},
+        50: {a: "TREVO BANCO BRASIL", l: "TREVO RODOVIARIA BANCO BRASIL", c: "BAIRRO", g: "-16.7399357,-43.8718982"},
+        51: {a: "RODOVIARIA", l: "RODOVIARIA DROGASIL", c: "BAIRRO", g: "-16.7416469,-43.8681328"},
+        52: {a: "FCO GAETANI", l: "AV. FCO GAETANI X CASTELAR PRATES", c: "BAIRRO", g: "-16.7508975,-43.8787849"},
+        53: {a: "PARQ. DE EXPOS", l: "PARQ. DE EXPOS X LINHA FERREA", c: "BAIRRO", g: "-16.71179,-43.85011"},
+        54: {a: "INTERLAGOS", l: "LAGOA DE INTERLAGOS", c: "BAIRRO", g: "-16.70566,-43.83723"},
+        55: {a: "TREVO DA SION", l: "TREVO DA SION", c: "BAIRRO", g: "-16.67373,-43.81164"},
+        56: {a: "TREVO SAMU", l: "TREVO SAMU", c: "TREVO", g: "-16.74588,-43.84645"},
+        57: {a: "MAJOR PRATES", l: "TREVO MAJOR PRATES - PARQUE", c: "BAIRRO", g: "-16.7548,-43.88137"},
+        58: {a: "JOÃO XXIII", l: "AV.JOÃO XXIII x RUA PADRE FABIANO", c: "BAIRRO", g: "-16.70363,-43.86758"},
+        59: {a: "TREVO INDUSTRIAS", l: "TREVO INDUSTRIAS", c: "TREVO", g: "-16.68953,-43.87299"},
+        60: {a: "SAIDA BR365", l: "SAIDA BR365", c: "TREVO", g: "-16.67931,-43.88012"},
+        61: {a: "PRODUCAO", l: "ESTRADA DA PRODUCAO", c: "TREVO", g: "-16.687439,-43.818350"},
+        62: {a: "CATOPE", l: "SAIDA BR251 (CATOPE)", c: "TREVO", g: "-16.678786,-43.801228"},
+        63: {a: "JURAMENTO", l: "PORTICO (JURAMENTO)", c: "TREVO", g: "-16.749509,-43.828515"},
+        "63.1": {a: "PONTALETE", l: "PONTALETE (JURAMENTO)", c: "TREVO", g: "-16.749392,-43.828265"},
+        64: {a: "SAIDA BH", l: "PORTICO SAIDA BH", c: "TREVO", g: "-16.758046,-43.844052"},
+        65: {a: "PONTALETE BH", l: "PONTALETE (SAIDA BH)", c: "SAÍDA", g: "-16.757316,-43.844565"},
+        66: {a: "PIRAPORA", l: "SAIDA PARA PIRAPORA", c: "SAÍDA", g: "-16.76479,-43.88387"},
+        67: {a: "RODOVIARIA", l: "RODOVIARIA", c: "BAIRRO", g: "-16.74244,-43.86836"},
+        68: {a: "VICENTE GUIMARAES", l: "AV. VICENTE GUIMARAES", c: "BAIRRO", g: "-16.74643,-43.87128"},
+        69: {a: "PLINIO RIBEIRO", l: "AV. DEP PLINIO RIBEIRO X AV. CEL LUIZ MAIA", c: "BAIRRO", g: "-16.73092,-43.84588"},
+        70: {a: "PREFEITURA NOVA", l: "PREFEITURA NOVA", c: "OUTROS", g: "-16.70218,-43.82876"},
+        71: {a: "TROPEIROS", l: "TREVO TROPEIROS", c: "TREVO", g: "-16.69636,-43.81921"},
+        72: {a: "PARQUE MUNICIPAL", l: "ROTATÓRIA PARQUE MUNICIPAL", c: "BAIRRO", g: "-16.751554,-43.885485"},
+        73: {a: "JATOBÁS", l: "PRAÇA DOS JATOBÁS", c: "BAIRRO", g: "-16.736027,-43.881099"},
+        74: {a: "MERCADO MUNICIPAL", l: "MERCADO MUNICIPAL", c: "CENTRO", g: "-16.716735,-43.865941"},
+        75: {a: "CASCO", l: "CASCO", c: "BAIRRO", g: "-16.724237,-43.881184"},
+        76: {a: "PREFEITURA NOVA", l: "PREFEITURA NOVA INTERIOR", c: "BAIRRO", g: "-16.700183,-43.827333"},
+        77: {a: "FLAMARION", l: "PRAÇA FLAMARION WANDERLEY", c: "BAIRRO", g: "-16.721257,-43.858207"},
+        78: {a: "RODOVIÁRIA", l: "EMBARQUE RODOVIÁRIA", c: "BAIRRO", g: "-16.743192,-43.868424"},
         79: {a: "CEANORTE", l: "CEANORTE", c: "BAIRRO", g: "-16.757292, -43.847177"}
     };
-
-    // Preenche automaticamente apelidos para pontos que eu não digitei acima
-    for(let i=1; i<=79; i++) {
-        if(!cameras[i] && i != 63) cameras[i] = {a: "POSTE "+i, l: "LOCAL DO POSTE "+i, c: "CENTRO", g: "0,0"};
-    }
 
     let activeId = null;
 
@@ -203,7 +263,7 @@
             btn.className = 'btn';
             btn.dataset.cat = cam.c;
             btn.dataset.loc = cam.l;
-            btn.dataset.ape = cam.a;
+            btn.dataset.apelido = cam.a;
             btn.onclick = () => ver(id);
             btn.innerHTML = `<span class="btn-num">${id}</span><span class="btn-loc">${cam.a}</span>`;
             grid.appendChild(btn);
@@ -226,7 +286,7 @@
         const t = document.getElementById('searchBar').value.toUpperCase();
         document.getElementById('clearSearch').style.display = t ? 'block' : 'none';
         document.querySelectorAll('.btn').forEach(b => {
-            const match = b.dataset.loc.includes(t) || b.dataset.ape.includes(t) || b.querySelector('.btn-num').innerText.includes(t);
+            const match = b.dataset.loc.toUpperCase().includes(t) || b.dataset.apelido.toUpperCase().includes(t) || b.querySelector('.btn-num').innerText.includes(t);
             b.classList.toggle('hidden', !match);
         });
     }
@@ -282,7 +342,7 @@
         }, () => alert("ERRO AO OBTER LOCALIZAÇÃO."));
     }
 
-    setTimeout(render, 300); 
+    setTimeout(render, 500); 
 </script>
 </body>
 </html>
