@@ -124,23 +124,22 @@
             margin: 0 auto;
         }
 
-        /* BOTÃO: FUNDO BRANCO E NÚMERO AZUL */
         .btn {
             aspect-ratio: 1/1; 
-            background: #ffffff; 
-            border: 1px solid rgba(0,0,0,0.1);
+            background: var(--amarelo-logo); 
+            border: none;
             border-radius: 18px; 
             font-size: 24px; 
             font-weight: 700; 
             color: var(--azul-logo);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             display: flex; 
             align-items: center; 
             justify-content: center;
             transition: transform 0.1s;
         }
 
-        .btn:active { transform: scale(0.9); background-color: #f2f2f7; }
+        .btn:active { transform: scale(0.9); filter: brightness(0.9); }
 
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -163,8 +162,8 @@
             to { transform: translateY(0); }
         }
 
-        #modal-title { font-size: 11px; color: #8e8e93; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
-        #modal-text { font-size: 18px; font-weight: 800; margin-bottom: 25px; line-height: 1.4; color: #000; }
+        #modal-cat-tag { font-size: 11px; font-weight: 800; background: #f2f2f7; color: var(--azul-logo); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        #modal-text { font-size: 19px; font-weight: 800; margin-bottom: 25px; line-height: 1.4; color: #000; text-transform: uppercase; }
         
         .action-buttons { display: flex; flex-direction: column; gap: 10px; }
 
@@ -212,7 +211,7 @@
 <div id="modal" onclick="fecharFora(event)">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div style="width: 35px; height: 5px; background: #e5e5ea; border-radius: 5px; margin: 0 auto 20px;"></div>
-        <div id="modal-title">Detalhes da Localização</div>
+        <div id="modal-cat-tag"></div>
         <div id="modal-text"></div>
         <div class="action-buttons">
             <a id="maps-url" href="" target="_blank" class="maps-link">📍 VER NO GOOGLE MAPS</a>
@@ -228,7 +227,7 @@
         2: {l: "PCA DR CARLOS FRENTE COPASA", c: "CENTRO", g: "-16.7233637,-43.8653465"},
         3: {l: "RUA DR. SANTOS X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7240059,-43.8653894"},
         4: {l: "RUA DR. SANTOS X RUA D. PEDRO II", c: "CENTRO", g: "-16.7249911,-43.8656682"},
-        5: {l: "RUA DR. SANTOS X RUA D. JOÃO PIMENTA", c: "CENTRO", g: "-16.7264145,-43.8659132"},
+        5: {l: "RUA DR. SANTOS X RUAD. JOÃO PIMENTA", c: "CENTRO", g: "-16.7264145,-43.8659132"},
         6: {l: "PRAÇA CEL. RIBEIRO", c: "CENTRO", g: "-16.7271019,-43.8667055"},
         7: {l: "RUA CAMILO P. X RUA D. PEDRO II", c: "CENTRO", g: "-16.72495,-43.8662154"},
         8: {l: "RUA CAMILO P. X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7237787,-43.8660667"},
@@ -259,7 +258,7 @@
         33: {l: "AV. JOAO XXIII ANTIGA UAI", c: "BAIRRO", g: "-16.7137079,-43.8637346"},
         34: {l: "AV. JOAO XXIII X AV. PRESIDENTE KENNEDY", c: "BAIRRO", g: "-16.7092412,-43.8654801"},
         35: {l: "AV. DOUTOR VELOSO X DOM PEDRO II", c: "CENTRO", g: "-16.7247872,-43.8670288"},
-        36: {l: "AV. PRES. VARGAS X RUA DOUTOR VELOSO", c: "CENTRO", g: "-16.7232801,-43.8667716"},
+        36: {l: "AV. PRES. VARGAS X RUA DOUTOR VELOSO", c: "CENTRO", g: "-16.7233586,-43.8667716"},
         37: {l: "AV. GOV. VALAD. X AV. CEL. PRATES", c: "CENTRO", g: "-16.7223919,-43.8669699"},
         38: {l: "RUA SIMEAO RIBEIRO X RUA ALT FREITAS", c: "CENTRO", g: "-16.7224725,-43.8662136"},
         39: {l: "RUA SIMEAO RIBEIRO X RUA LAFETA", c: "CENTRO", g: "-16.7219834,-43.8661073"},
@@ -284,12 +283,12 @@
         58: {l: "AV.JOÃO XXIII x RUA PADRE FABIANO", c: "BAIRRO", g: "-16.70363,-43.86758"},
         59: {l: "TREVO INDUSTRIAS", c: "TREVO", g: "-16.68953,-43.87299"},
         60: {l: "SAIDA BR365", c: "TREVO", g: "-16.67931,-43.88012"},
-        61: {l: "ESTRADA DA PRODUÇÃO", c: "TREVO", g: "-16.687439,-43.818350"},
-        62: {l: "CATOPÊ", c: "TREVO", g: "-16.678786,-43.801228"},
-        63: {l: "JURAMENTO - PÓRTICO", c: "TREVO", g: "-16.749509,-43.828515"},
-        63.1: {l: "JURAMENTO - PONTALETE", c: "TREVO", g: "-16.749392,-43.828265"},
-        64: {l: "PÓRTICO SAÍDA BH", c: "SAÍDA", g: "-16.758046,-43.844052"},
-        65: {l: "PONTALETE BR-135", c: "SAÍDA", g: "-16.757316,-43.844565"},
+        61: {l: "ESTRADA DA PRODUCAO", c: "TREVO", g: "-16.687439,-43.818350"},
+        62: {l: "SAIDA BR251 (CATOPE)", c: "TREVO", g: "-16.678786,-43.801228"},
+        63: {l: "PORTICO (JURAMENTO)", c: "TREVO", g: "-16.749509,-43.828515"},
+        "63.1": {l: "PONTALETE (JURAMENTO)", c: "TREVO", g: "-16.749392,-43.828265"},
+        64: {l: "PORTICO SAIDA BH", c: "TREVO", g: "-16.758046,-43.844052"},
+        65: {l: "PONTALETE (SAIDA BH)", c: "SAÍDA", g: "-16.757316,-43.844565"},
         66: {l: "SAIDA PARA PIRAPORA", c: "SAÍDA", g: "-16.76479,-43.88387"},
         67: {l: "RODOVIARIA", c: "BAIRRO", g: "-16.74244,-43.86836"},
         68: {l: "AV. VICENTE GUIMARAES", c: "BAIRRO", g: "-16.74643,-43.87128"},
@@ -303,30 +302,29 @@
         76: {l: "PREFEITURA NOVA INTERIOR", c: "BAIRRO", g: "-16.700183,-43.827333"},
         77: {l: "PRAÇA FLAMARION WANDERLEY", c: "BAIRRO", g: "-16.721257,-43.858207"},
         78: {l: "EMBARQUE RODOVIÁRIA", c: "BAIRRO", g: "-16.743192,-43.868424"},
-        79: {l: "CEANORTE", c: "BAIRRO", g: "-16.757295,-43.847374"}
+        79: {l: "CEANORTE", c: "BAIRRO", g: "-16.743192,-43.868424"}
     };
 
     const grid = document.getElementById('mainGrid');
+    let currentId = null;
 
-function render() {
-    let html = '';
-
-    Object.keys(cameras)
-        .sort((a, b) => parseFloat(a) - parseFloat(b))
-        .forEach(id => {
-            html += `<button class="btn"
-                data-cat="${cameras[id].c}"
-                data-loc="${cameras[id].l}"
-                onclick="ver('${id}')">${id}</button>`;
+    function render() {
+        let html = '';
+        Object.keys(cameras).sort((a, b) => parseFloat(a) - parseFloat(b)).forEach(id => {
+            html += `<button class="btn" data-cat="${cameras[id].c}" data-loc="${cameras[id].l}" onclick="ver('${id}')">${id}</button>`;
         });
+        grid.innerHTML = html;
+    }
 
-    grid.innerHTML = html;
-}
-
-function ver(id) {
+    function ver(id) {
         if (navigator.vibrate) navigator.vibrate(50);
+        currentId = id;
         const cam = cameras[id];
-        document.getElementById('modal-text').innerText = cam.l; 
+        
+        // Texto dinâmico: POSTE [NÚMERO]: [LOCAL]
+        document.getElementById('modal-text').innerText = "POSTE " + id + ": " + cam.l; 
+        
+        document.getElementById('modal-cat-tag').innerText = cam.c;
         document.getElementById('maps-url').href = "https://www.google.com/maps/search/?api=1&query=" + cam.g;
         document.getElementById('modal').style.display = "flex";
     }
@@ -343,8 +341,11 @@ function ver(id) {
     }
 
     function copiarEndereco() {
-        const texto = document.getElementById('modal-text').innerText;
-        navigator.clipboard.writeText(texto).then(() => {
+        const cam = cameras[currentId];
+        // Formato de cópia: CÂMERA X - ENDEREÇO
+        const textoParaCopiar = "CÂMERA " + currentId + " - " + cam.l;
+        
+        navigator.clipboard.writeText(textoParaCopiar).then(() => {
             const btn = document.getElementById('copy-btn');
             btn.innerHTML = '✅ COPIADO!';
             btn.style.background = 'var(--verde-maps)';
