@@ -12,14 +12,14 @@
             --azul-logo: #2D46B9;
             --amarelo-logo: #E9C143;
             --verde-maps: #34a853;
-            --bg: #ffffff; /* FUNDO BRANCO FIXO */
+            --bg: #f2f2f7; /* CINZA CLARO PADRÃO */
             --texto: #1c1c1e;
             --safe-top: env(safe-area-inset-top);
         }
 
-        /* FORÇA FUNDO BRANCO EM QUALQUER MODO (CLARO OU ESCURO) */
+        /* FORÇA FUNDO CINZA E ELEMENTOS COERENTES */
         body { 
-            background-color: #ffffff !important; 
+            background-color: var(--bg) !important; 
             color: #1c1c1e !important; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             margin: 0; 
@@ -30,7 +30,7 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         header { 
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(242, 242, 247, 0.95); /* Header acompanhando o cinza */
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             position: fixed; top: 0; width: 100%; z-index: 1000;
@@ -54,29 +54,28 @@
         }
         .categories::-webkit-scrollbar { display: none; }
         .pill {
-            padding: 8px 18px; border-radius: 20px; background: #f2f2f7;
+            padding: 8px 18px; border-radius: 20px; background: rgba(255,255,255,0.7);
             border: none; color: var(--azul-logo); font-size: 12px; font-weight: 700;
             white-space: nowrap;
         }
         .pill.active { background: var(--azul-logo); color: white; }
 
-        /* GRID DE BOTÕES */
         .grid {
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
             gap: 12px; padding: 0 15px; max-width: 1000px; margin: 0 auto;
         }
 
-        /* BOTÃO AMARELO COM NÚMERO E LOCAL EMBAIXO */
+        /* BOTÃO: FUNDO BRANCO, NÚMERO AZUL */
         .btn {
             min-height: 100px;
-            background: var(--amarelo-logo); 
+            background: #ffffff; 
             border: none;
             border-radius: 15px; 
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 10px 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             transition: transform 0.1s;
             cursor: pointer;
         }
@@ -88,9 +87,9 @@
             display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
         }
 
-        .btn:active { transform: scale(0.92); opacity: 0.9; }
+        .btn:active { transform: scale(0.92); background-color: #e5e5ea; }
 
-        /* MODAL (BALÃO AO CLICAR) */
+        /* MODAL */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 2000; align-items: flex-end; justify-content: center;
@@ -144,7 +143,7 @@
         <div id="modal-cat-tag"></div>
         <div id="modal-text"></div>
         <div class="action-buttons">
-            <a id="maps-url" href="" target="_blank" class="maps-link">📍 VER NO GOOGLE MAPS</a>
+            <a id="maps-url" href="" target="_blank" class="maps-link">📍 ABRIR NO GOOGLE MAPS</a>
             <button id="copy-btn" class="copy-btn" onclick="copiarEndereco()">📋 COPIAR ENDEREÇO</button>
             <button class="close-btn" onclick="fechar()">FECHAR</button>
         </div>
@@ -232,7 +231,7 @@
         76: {l: "PREFEITURA NOVA INTERIOR", c: "BAIRRO", g: "-16.700183,-43.827333"},
         77: {l: "PRAÇA FLAMARION WANDERLEY", c: "BAIRRO", g: "-16.721257,-43.858207"},
         78: {l: "EMBARQUE RODOVIÁRIA", c: "BAIRRO", g: "-16.743192,-43.868424"},
-        79: {l: "CEANORTE", c: "BAIRRO", g: "-16.743192,-43.868424"}
+        79: {l: "CEANORTE", c: "BAIRRO", g: "-16.757292, -43.847177"}
     };
 
     const grid = document.getElementById('mainGrid');
