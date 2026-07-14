@@ -12,35 +12,25 @@
             --azul-logo: #2D46B9;
             --amarelo-logo: #E9C143;
             --verde-maps: #34a853;
-            --bg: #ffffff; /* Fundo Branco */
-            --card: rgba(255, 255, 255, 0.9);
+            --bg: #ffffff; /* FUNDO BRANCO FIXO */
             --texto: #1c1c1e;
             --safe-top: env(safe-area-inset-top);
         }
 
-        /* Força fundo branco mesmo em modo escuro */
-        @media (prefers-color-scheme: dark) {
-            body { background-color: #ffffff !important; color: #1c1c1e !important; }
-            header { background: rgba(255, 255, 255, 0.9) !important; }
-            #searchBar { background: rgba(0, 0, 0, 0.05) !important; color: #000 !important; }
-            .btn { background: var(--amarelo-logo) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important; }
-            .pill { background: #f2f2f7 !important; color: var(--azul-logo) !important; }
-            .modal-box { background: #ffffff !important; color: #000 !important; }
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+        /* FORÇA FUNDO BRANCO EM QUALQUER MODO (CLARO OU ESCURO) */
         body { 
+            background-color: #ffffff !important; 
+            color: #1c1c1e !important; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background-color: var(--bg); 
             margin: 0; 
-            color: var(--texto);
             padding-top: calc(var(--safe-top) + 185px); 
             padding-bottom: 40px;
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         header { 
-            background: var(--card);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             position: fixed; top: 0; width: 100%; z-index: 1000;
@@ -48,10 +38,7 @@
             box-shadow: 0 1px 10px rgba(0,0,0,0.05);
         }
 
-        .header-content {
-            display: flex; flex-direction: column; align-items: center; width: 100%;
-        }
-
+        .header-content { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .logo-container { padding: 10px 0 5px; }
         .logo-img { height: 50px; width: auto; }
 
@@ -73,14 +60,14 @@
         }
         .pill.active { background: var(--azul-logo); color: white; }
 
-        /* GRID AJUSTADA PARA CABER TEXTO */
+        /* GRID DE BOTÕES */
         .grid {
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
             gap: 12px; padding: 0 15px; max-width: 1000px; margin: 0 auto;
         }
 
-        /* BOTÃO COM NÚMERO E LOCALIZAÇÃO */
+        /* BOTÃO AMARELO COM NÚMERO E LOCAL EMBAIXO */
         .btn {
             min-height: 100px;
             background: var(--amarelo-logo); 
@@ -94,41 +81,42 @@
             cursor: pointer;
         }
 
-        .btn-num {
-            font-size: 24px; font-weight: 900; color: var(--azul-logo);
-            margin-bottom: 4px;
-        }
-
+        .btn-num { font-size: 24px; font-weight: 900; color: var(--azul-logo); margin-bottom: 4px; }
         .btn-loc {
             font-size: 9px; font-weight: 700; color: var(--azul-logo);
-            text-transform: uppercase; text-align: center;
-            line-height: 1.1;
+            text-transform: uppercase; text-align: center; line-height: 1.1;
             display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
         }
 
         .btn:active { transform: scale(0.92); opacity: 0.9; }
 
-        /* MODAL */
+        /* MODAL (BALÃO AO CLICAR) */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 2000; align-items: flex-end; justify-content: center;
         }
         .modal-box {
-            background: white; width: 100%; max-width: 500px; 
+            background: white !important; width: 100%; max-width: 500px; 
             padding: 20px 20px calc(30px + env(safe-area-inset-bottom));
             border-radius: 25px 25px 0 0; text-align: center;
             animation: slideUp 0.3s ease-out;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        #modal-cat-tag { font-size: 11px; font-weight: 800; background: #f2f2f7; color: var(--azul-logo); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 10px; text-transform: uppercase; }
         #modal-text { font-size: 18px; font-weight: 800; margin-bottom: 25px; line-height: 1.4; color: #000; text-transform: uppercase; }
+        
         .action-buttons { display: flex; flex-direction: column; gap: 10px; }
+        
         .maps-link, .copy-btn {
             display: flex; align-items: center; justify-content: center; gap: 8px;
             text-decoration: none; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 15px;
+            border: none; cursor: pointer; width: 100%;
         }
         .maps-link { background: var(--verde-maps); color: white; }
-        .copy-btn { background: var(--azul-logo); color: white; border: none; }
-        .close-btn { background: transparent; color: #8e8e93; padding: 10px; border: none; font-weight: 600; }
+        .copy-btn { background: var(--azul-logo); color: white; }
+        .close-btn { background: transparent; color: #8e8e93; padding: 10px; border: none; font-weight: 600; font-size: 14px; }
+        
         .hidden { display: none !important; }
     </style>
 </head>
@@ -150,9 +138,10 @@
 
 <div class="grid" id="mainGrid"></div>
 
-<div id="modal">
-    <div class="modal-box">
-        <div style="width: 35px; height: 5px; background: #e5e5ea; border-radius: 5px; margin: 0 auto 20px;"></div>
+<div id="modal" onclick="fecharFora(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div style="width: 35px; height: 5px; background: #e5e5ea; border-radius: 5px; margin: 0 auto 15px;"></div>
+        <div id="modal-cat-tag"></div>
         <div id="modal-text"></div>
         <div class="action-buttons">
             <a id="maps-url" href="" target="_blank" class="maps-link">📍 VER NO GOOGLE MAPS</a>
@@ -191,7 +180,7 @@
         25: {l: "AV. GER ATHAIDE (CASA LOTERICA)", c: "BAIRRO", g: "-16.71552279,-43.8563751"},
         26: {l: "RUA SÃO FRANCISCO X RUA VISCONDE DE OURO PRETO", c: "CENTRO", g: "-16.72243590296203,-43.86421571530572"},
         27: {l: "PRAÇA MATRIZ PROX BABI", c: "CENTRO", g: "-16.7211986,-43.865807"},
-        28: {l: "RUA FLORIA. NEIVA X RUA JUST. CÂMARA", c: "CENTRO", g: "-16.7205835,-43.8655594"},
+        28: {l: "RUA  FLORIA. NEIVA X RUA JUST. CÂMARA", c: "CENTRO", g: "-16.7205835,-43.8655594"},
         29: {l: "AV. ARMENIO VELOSO X AV. FILOMENO RIBEIRO (PRACA DE ESPORTES)", c: "CENTRO", g: "-16.7209947,-43.8644949"},
         30: {l: "RUA PE. TEIXEIRA X AV. ARMENIO VELOSO (PRACA DE ESPORTES)", c: "CENTRO", g: "-16.7189659,-43.8632874"},
         31: {l: "RUA MARECHAL DEODORO X AV. ARTUR BERNARDES", c: "CENTRO", g: "-16.7176466,-43.8631855"},
@@ -243,7 +232,7 @@
         76: {l: "PREFEITURA NOVA INTERIOR", c: "BAIRRO", g: "-16.700183,-43.827333"},
         77: {l: "PRAÇA FLAMARION WANDERLEY", c: "BAIRRO", g: "-16.721257,-43.858207"},
         78: {l: "EMBARQUE RODOVIÁRIA", c: "BAIRRO", g: "-16.743192,-43.868424"},
-        79: {l: "CEANORTE", c: "BAIRRO", g: "-16.757286,-43.847198"}
+        79: {l: "CEANORTE", c: "BAIRRO", g: "-16.743192,-43.868424"}
     };
 
     const grid = document.getElementById('mainGrid');
@@ -272,12 +261,8 @@
         document.getElementById('modal').style.display = "flex";
     }
 
-    function fechar() { 
-        document.getElementById('modal').style.display = "none"; 
-        const btn = document.getElementById('copy-btn');
-        btn.innerHTML = '📋 COPIAR ENDEREÇO';
-        btn.style.background = 'var(--azul-logo)';
-    }
+    function fechar() { document.getElementById('modal').style.display = "none"; }
+    function fecharFora(e) { if (e.target.id === 'modal') fechar(); }
 
     function copiarEndereco() {
         const cam = cameras[currentId];
@@ -286,7 +271,11 @@
             const btn = document.getElementById('copy-btn');
             btn.innerHTML = '✅ COPIADO!';
             btn.style.background = 'var(--verde-maps)';
-            setTimeout(fechar, 800);
+            setTimeout(() => {
+                btn.innerHTML = '📋 COPIAR ENDEREÇO';
+                btn.style.background = 'var(--azul-logo)';
+                fechar();
+            }, 800);
         });
     }
 
