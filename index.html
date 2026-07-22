@@ -6,16 +6,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#2D46B9">
-    <title>GUARDIÃ PRO - GPS</title>
+    <title>GUARDIÃ PRO - MONITORAMENTO</title>
     
     <style>
         :root {
             --azul: #2D46B9;
             --amarelo: #E9C143;
-            --verde-wa: #25D366; /* COR DO WHATSAPP */
+            --verde-wa: #25D366; 
             --verde-maps: #34a853;
             --bg: #f2f2f7; 
-            --card: #ffffff; 
+            --card-urbano: #ffffff;
+            --card-rural: #FFFBEB; /* COR DIFERENCIADA PARA RURAL */
             --texto: #1c1c1e;
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
@@ -65,7 +66,7 @@
         }
 
         .categories {
-            display: flex; overflow-x: auto; padding: 10px 15px 12px; gap: 8px;
+            display: flex; overflow-x: auto; padding: 5px 15px 12px; gap: 8px;
             scrollbar-width: none; width: 100%; max-width: 600px;
         }
         .categories::-webkit-scrollbar { display: none; }
@@ -85,16 +86,19 @@
         .skeleton { height: 105px; background: #e5e5ea; border-radius: 16px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
+        /* ESTILO DOS BOTÕES */
         .btn {
             min-height: 105px;
-            background: #ffffff; border: none; border-radius: 18px; 
+            border-radius: 18px; 
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 10px 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            transition: transform 0.1s; cursor: pointer;
+            transition: transform 0.1s; cursor: pointer; border: none;
         }
+        .btn-urbano { background: var(--card-urbano); }
+        .btn-rural { background: var(--card-rural); border: 1px solid #E9D8A6; }
 
-        .btn-num { font-size: 26px; font-weight: 900; color: var(--azul); margin-bottom: 4px; }
+        .btn-num { font-size: 24px; font-weight: 900; color: var(--azul); margin-bottom: 4px; }
         .btn-loc {
             font-size: 8px; font-weight: 800; color: #48484a;
             text-align: center; line-height: 1.2;
@@ -102,8 +106,9 @@
             padding: 0 4px;
         }
 
-        .btn:active { transform: scale(0.94); background-color: #e5e5ea; }
+        .btn:active { transform: scale(0.94); opacity: 0.8; }
 
+        /* MODAL */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 2000; align-items: flex-end; justify-content: center;
@@ -148,6 +153,7 @@
         <button class="pill" onclick="filtrarCat('CENTRO', this)">CENTRO</button>
         <button class="pill" onclick="filtrarCat('BAIRRO', this)">BAIRROS</button>
         <button class="pill" onclick="filtrarCat('TREVO', this)">TREVOS</button>
+        <button class="pill" onclick="filtrarCat('RURAL', this)">RURAL</button>
         <button class="pill" onclick="filtrarCat('SAÍDA', this)">SAÍDAS</button>
     </div>
 </header>
@@ -171,6 +177,7 @@
 
 <script>
     const cameras = {
+        // --- URBANAS ---
         1: {a: "PÇA DR CARLOS", l: "PCA DR CARLOS FRENTE MIN FAZENDA", c: "CENTRO", g: "-16.722728,-43.865195"},
         2: {a: "PÇA DR CARLOS", l: "PCA DR CARLOS FRENTE COPASA", c: "CENTRO", g: "-16.7233637,-43.8653465"},
         3: {a: "DR. SANTOS / PE. AUGUSTO", l: "RUA DR. SANTOS X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7240059,-43.8653894"},
@@ -213,16 +220,16 @@
         40: {a: "RUA SANTA MARIA / INICIO", l: "AV.SANTA MARIA X RUA GONC FIGUEIRA", c: "CENTRO", g: "-16.7209822,-43.866872"},
         41: {a: "RUA SANTA MARIA / AV. DEP ESTEVES RODRIGUES", l: "RUA SANTA MARIA X AV. DEP ESTEVES RODRIGUES", c: "CENTRO", g: "-16.720182,-43.869157"},
         42: {a: "AV ESTEVES RODR / CASA ESFIRRA", l: "AV. DEP EST. RODRIGUES - CASA DA ESFIRRA", c: "CENTRO", g: "-16.7218961,-43.8718478"},
-        43: {a: "RUA SANTA MARIA X PÇA TODOS OS SANTOS", l: "RUA SANTA MARIA X PÇA TODOS OS SANTOS", c: "BAIRRO", g: "-16.7177068,-43.8738467"},
-        44: {a: "RUA BARAO RIO BRANCO / AV. AFONSO PENA", l: "RUA BARÃO DO RIO BRANCO X AV. AFONSO PENA", c: "CENTRO", g: "-16.7264486,-43.8693346"},
+        43: {a: "SANTA MARIA / S ANTONIO", l: "RUA SANTA MARIA X RUA SANTO ANTONIO", c: "BAIRRO", g: "-16.7177068,-43.8738467"},
+        44: {a: "RUA BARAO RIO BRANCO / PENA", l: "RUA BARÃO DO RIO BRANCO X AV. AFONSO PENA", c: "CENTRO", g: "-16.7264486,-43.8693346"},
         45: {a: "HOSPITAL SANTA CASA", l: "AV. CEL PRATES PRAÇA STA CASA", c: "CENTRO", g: "-16.725157,-43.8699223"},
         46: {a: "ALL TIME", l: "ALL TIME", c: "CENTRO", g: "-16.7275085,-43.8724411"},
-        47: {a: "PREFEITURA ANTIGA", l: "PREFEITURA ANTIGA", c: "BAIRRO", g: "-16.7302097,-43.870764"},
-        48: {a: "AV. CULA MANGABEIRA / HOSPITAL UNIVERSITARIO", l: "AV. CULA MANGABEIRA / HOSPITAL UNIVERSITARIO", c: "BAIRRO", g: "-16.7333356,-43.8721867"},
-        49: {a: "AV CULA MANG / IGREJA SANTO EXPEDITO", l: "AV. CULA MANGABEIRA X RUA JOAO REBELO", c: "BAIRRO", g: "-16.7370395,-43.872122"},
+        47: {a: "PREF ANTIGA", l: "AV. DEP EST. RODRIGUES X PREFEITURA ANTIGA", c: "BAIRRO", g: "-16.7302097,-43.870764"},
+        48: {a: "AV CULA MANG / HOSP UNIV", l: "AV. CULA MANGABEIRA - HOSPITAL UNIVERSITARIO", c: "BAIRRO", g: "-16.7333356,-43.8721867"},
+        49: {a: "AV CULA MANG / S EXPEDITO", l: "AV. CULA MANGABEIRA X RUA JOAO REBELO", c: "BAIRRO", g: "-16.7370395,-43.872122"},
         50: {a: "TREVO RODOV / BB", l: "TREVO RODOVIARIA BANCO BRASIL", c: "BAIRRO", g: "-16.7399357,-43.8718982"},
         51: {a: "RODOV / DROGASIL", l: "RODOVIARIA DROGASIL", c: "BAIRRO", g: "-16.7416469,-43.8681328"},
-        52: {a: "AV. FCO GAETANI X CASTELAR PRATES", l: "AV. FCO GAETANI X CASTELAR PRATES", c: "BAIRRO", g: "-16.7508975,-43.8787849"},
+        52: {a: "GAETANI / CASTELAR", l: "AV. FCO GAETANI X CASTELAR PRATES", c: "BAIRRO", g: "-16.7508975,-43.8787849"},
         53: {a: "PARQUE EXPOS / L FERREA", l: "PARQ. DE EXPOS X LINHA FERREA", c: "BAIRRO", g: "-16.71179,-43.85011"},
         54: {a: "LAGOA INTERLAGOS", l: "LAGOA DE INTERLAGOS", c: "BAIRRO", g: "-16.70566,-43.83723"},
         55: {a: "TREVO DA SION", l: "TREVO DA SION", c: "BAIRRO", g: "-16.71773740930767,-43.84412012153269"},
@@ -231,12 +238,13 @@
         58: {a: "AV JOAO XXIII / PADRE FAB", l: "AV.JOÃO XXIII X RUA PADRE FABIANO", c: "BAIRRO", g: "-16.70363,-43.86758"},
         59: {a: "TREVO INDUSTRIAS", l: "TREVO INDUSTRIAS", c: "TREVO", g: "-16.68953,-43.87299"},
         60: {a: "SAIDA BR365/LA SUITE", l: "SAIDA BR365 / LA SUITE", c: "SAÍDA", g: "-16.679863,-43.878507"},
-        61: {a: "ESTRADA DA PRODUCAO", l: "ESTRADA DA PRODUCAO", c: "SAÍDA", g: "-16.687439,-43.818350"},
+        61: {a: "ESTRADA PRODUCAO", l: "ESTRADA DA PRODUCAO", c: "SAÍDA", g: "-16.687439,-43.818350"},
         62: {a: "TREVO CATOPE", l: "SAIDA BR251 (CATOPE)", c: "SAÍDA", g: "-16.678786,-43.801228"},
         63: {a: "SAIDA JURAMENTO", l: "SAIDA JURAMENTO", c: "SAÍDA", g: "-16.749509,-43.828515"},
-        64: {a: "SAIDA BH", l: "SAIDA BH", c: "SAÍDA", g: "-16.758046,-43.844052"},
+        "63.1": {a: "SAIDA JURAMENTO", l: "SAIDA JURAMENTO", c: "SAÍDA", g: "-16.749392,-43.828265"},
+        64: {a: "SAIDA BH", l: "PORTICO SAIDA BH", c: "SAÍDA", g: "-16.758046,-43.844052"},
         65: {a: "SAIDA BH", l: "SAIDA BH", c: "SAÍDA", g: "-16.757316,-43.844565"},
-        66: {a: "TREVO PIRAPORA", l: "TREVO PARA PIRAPORA", c: "TREVO", g: "-16.76479,-43.88387"},
+        66: {a: "SAIDA PIRAPORA", l: "SAIDA PARA PIRAPORA", c: "TREVO", g: "-16.76479,-43.88387"},
         67: {a: "RODOVIARIA FRENTE", l: "RODOVIARIA FRENTE", c: "BAIRRO", g: "-16.74244,-43.86836"},
         68: {a: "ROTATORIA AV. VICENTE GUIMARAES", l: "ROTATORIA AV. VICENTE GUIMARAES", c: "BAIRRO", g: "-16.74643,-43.87128"},
         69: {a: "AV. DEP. PLINIO RIB / CEL L MAIA", l: "AV. DEP PLINIO RIBEIRO X AV. CEL LUIZ MAIA", c: "BAIRRO", g: "-16.73092,-43.84588"},
@@ -246,10 +254,66 @@
         73: {a: "PRACA JATOBAS", l: "PRAÇA DOS JATOBÁS", c: "BAIRRO", g: "-16.736027,-43.881099"},
         74: {a: "MERCADO MUNICIPAL", l: "MERCADO MUNICIPAL", c: "CENTRO", g: "-16.716735,-43.865941"},
         75: {a: "PONTO CERTO/RISP", l: "PONTO CERTO/RISP", c: "BAIRRO", g: "-16.724237,-43.881184"},
-        76: {a: "PREFEITURA NOVA INTERIOR", l: "PREFEITURA NOVA INTERIOR", c: "BAIRRO", g: "-16.700183,-43.827333"},
+        76: {a: "INTERIOR PREFEITURA NOVA", l: "INTERIOR PREFEITURA NOVA", c: "BAIRRO", g: "-16.700183,-43.827333"},
         77: {a: "PRACA SAO JOSÉ", l: "PRAÇA SAO JOSÉ", c: "BAIRRO", g: "-16.721257,-43.858207"},
         78: {a: "RODOVIÁRIA EMBARQUE ", l: "RODOVIÁRIA EMBARQUE", c: "BAIRRO", g: "-16.743192,-43.868424"},
-        79: {a: "CEANORTE", l: "CEANORTE", c: "BAIRRO", g: "-16.757292, -43.847177"}
+        79: {a: "CEANORTE", l: "CEANORTE", c: "BAIRRO", g: "-16.757292, -43.847177"},
+
+        // --- RURAIS ---
+        80: {a: "EUROFARMA", l: "EUROFARMA", c: "RURAL", g: "-16.642387,-43.814704"},
+        81: {a: "EST. PRODUÇÃO", l: "ESTRADA DA PRODUÇÃO", c: "RURAL", g: "-16.611291,-43.803569"},
+        82: {a: "EST. PRODUÇÃO", l: "ESTRADA DA PRODUÇÃO", c: "RURAL", g: "-16.521160,-43.776100"},
+        83: {a: "TABÚAS", l: "TABÚAS", c: "RURAL", g: "-16.501512,-43.778137"},
+        84: {a: "EST. PRODUÇÃO", l: "ESTRADA DA PRODUÇÃO", c: "RURAL", g: "-16.469504,-43.782591"},
+        85: {a: "RIO CANABRAVA", l: "RIO CANABRAVA", c: "RURAL", g: "-16.432138,-43.792380"},
+        86: {a: "TREVO CAP. ENÉAS", l: "TREVO CAPITÃO ENÉAS", c: "RURAL", g: "-16.344426,-43.808357"},
+        87: {a: "TREVO FAZ BENGO", l: "TREVO FAZENDA BENGO", c: "RURAL", g: "-16.340757,-43.812174"},
+        88: {a: "EST. PRODUÇÃO", l: "ESTRADA DA PRODUÇÃO", c: "RURAL", g: "-16.192591,-43.863059"},
+        "89.1": {a: "S. PEDRO DA GARÇA", l: "SÃO PEDRO DA GARÇA (PONTO 1)", c: "RURAL", g: "-16.174354,-43.865721"},
+        "89.2": {a: "S. PEDRO DA GARÇA", l: "SÃO PEDRO DA GARÇA (PONTO 2)", c: "RURAL", g: "-16.171364,-43.864249"},
+        "89.3": {a: "S. PEDRO DA GARÇA", l: "SÃO PEDRO DA GARÇA (PONTO 3)", c: "RURAL", g: "-16.170329,-43.866304"},
+        "90.1": {a: "APAR. MUNDO NOVO", l: "APARECIDA DO MUNDO NOVO (PONTO 1)", c: "RURAL", g: "-16.115268,-43.924987"},
+        "90.2": {a: "APAR. MUNDO NOVO", l: "APARECIDA DO MUNDO NOVO (PONTO 2)", c: "RURAL", g: "-16.115054,-43.926347"},
+        "90.3": {a: "APAR. MUNDO NOVO", l: "APARECIDA DO MUNDO NOVO (PONTO 3)", c: "RURAL", g: "-16.113743,-43.928035"},
+        91: {a: "SAMAMBAIA", l: "SAMAMBAIA", c: "RURAL", g: "-16.449941,-43.825683"},
+        92: {a: "RECANTO VITÓRIA", l: "CHÁCARA RECANTO VITÓRIA", c: "RURAL", g: "-16.752197,-43.804778"},
+        93: {a: "PONTA DO MORRO", l: "PONTO 17 (PONTA DO MORRO)", c: "RURAL", g: "-16.760907,-43.759043"},
+        "94.1": {a: "VIASOLO AMB.", l: "VIASOLO ENGENHARIA AMBIENTAL S.A. (PONTO 1)", c: "RURAL", g: "-16.80261,-43.74253"},
+        "94.2": {a: "VIASOLO AMB.", l: "VIASOLO ENGENHARIA AMBIENTAL S.A. (PONTO 2)", c: "RURAL", g: "-16.802308,-43.742994"},
+        "94.3": {a: "VIASOLO AMB.", l: "VIASOLO ENGENHARIA AMBIENTAL S.A. (PONTO 3)", c: "RURAL", g: "-16.802445,-43.742443"},
+        95: {a: "SÃO GERALDO 2", l: "ENTRADA SÃO GERALDO 2", c: "RURAL", g: "-16.788269,-43.893355"},
+        96: {a: "POSTO BARRAL 2", l: "POSTO BARRAL 2", c: "RURAL", g: "-16.826247,-43.923740"},
+        "97.1": {a: "CANTO DO ENGENHO", l: "ENTRADA CANTO DO ENGENHO", c: "RURAL", g: "-16.856596,-44.053928"},
+        "97.2": {a: "CANTO DO ENGENHO", l: "CANTO DO ENGENHO", c: "RURAL", g: "-16.908136,-44.072303"},
+        98: {a: "CALHAU", l: "CALHAU", c: "RURAL", g: "-16.669662,-44.098596"},
+        99: {a: "PRÓX. TIM BAR", l: "PRÓXIMO A TIM BAR", c: "RURAL", g: "-16.623283,-43.904545"},
+        "100.1": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 1)", c: "RURAL", g: "-16.591795,-43.939539"},
+        "100.2": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 2)", c: "RURAL", g: "-16.583996,-43.938143"},
+        "100.3": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 3)", c: "RURAL", g: "-16.583171,-43.939690"},
+        "100.4": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 4)", c: "RURAL", g: "-16.579846,-43.939828"},
+        "100.5": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 5)", c: "RURAL", g: "-16.581552,-43.932128"},
+        101: {a: "VALE DOS IPÊS", l: "VALE DOS IPÊS", c: "RURAL", g: "-16.479465,-43.974594"},
+        "102.1": {a: "ERMIDINHA", l: "ERMIDINHA (PONTO 1)", c: "RURAL", g: "-16.43059675,-44.08853091"},
+        "102.2": {a: "ERMIDINHA", l: "ERMIDINHA (PONTO 2)", c: "RURAL", g: "-16.4266182,-44.0924281"},
+        "102.3": {a: "ERMIDINHA", l: "ERMIDINHA (PONTO 3)", c: "RURAL", g: "-16.43292418,-44.09072828"},
+        "103.1": {a: "PEDRA PRETA", l: "PEDRA PRETA (PONTO 1)", c: "RURAL", g: "-16.39722883,-44.14695701"},
+        "103.2": {a: "PEDRA PRETA", l: "PEDRA PRETA (PONTO 2)", c: "RURAL", g: "-16.400718843,-44.14853375"},
+        "104.1": {a: "SÃO JOÃO VEREDA", l: "SÃO JOÃO DA VEREDA (PONTO 1)", c: "RURAL", g: "-16.70047253,-44.11459909"},
+        "104.2": {a: "SÃO JOÃO VEREDA", l: "SÃO JOÃO DA VEREDA (PONTO 2)", c: "RURAL", g: "-16.7015584,-44.1149828"},
+        "104.3": {a: "SÃO JOÃO VEREDA", l: "SÃO JOÃO DA VEREDA (PONTO 3)", c: "RURAL", g: "-16.70247821,-44.11426749"},
+        105: {a: "MIRALTA", l: "MIRALTA", c: "RURAL", g: "-16.531680,-43.902958"},
+        "106.1": {a: "VILA NOVA", l: "VILA NOVA (PONTO 1)", c: "RURAL", g: "-16.45935982,-43.8667636"},
+        "106.2": {a: "VILA NOVA", l: "VILA NOVA (PONTO 2)", c: "RURAL", g: "-16.46081509,-43.86767028"},
+        107: {a: "PANORÂMICA", l: "PANORÂMICA", c: "RURAL", g: "-16.37363208,-43.99631106"},
+        "108.1": {a: "SANTA ROSA", l: "SANTA ROSA DE LIMA (PONTO 1)", c: "RURAL", g: "-16.35390007,-43.96595007"},
+        "108.2": {a: "SANTA ROSA", l: "SANTA ROSA DE LIMA (PONTO 2)", c: "RURAL", g: "-16.34711459,-43.96330343"},
+        "108.3": {a: "SANTA ROSA", l: "SANTA ROSA DE LIMA (PONTO 3)", c: "RURAL", g: "-16.345021,-43.963812"},
+        109: {a: "LAGOINHA", l: "LAGOINHA", c: "RURAL", g: "-16.879488,-43.862873"},
+        "110.1": {a: "PLANALTO", l: "PLANALTO", c: "RURAL", g: "-16.895852,-43.867733"},
+        "110.2": {a: "PONTALETE", l: "PONTALETE", c: "RURAL", g: "-16.896464,-43.867820"},
+        "111.1": {a: "CAMPOS ELÍSIOS", l: "CAMPOS ELÍSIOS (PONTO 1)", c: "RURAL", g: "-16.6623081,-43.76734181"},
+        "111.2": {a: "CAMPOS ELÍSIOS", l: "CAMPOS ELÍSIOS (PONTO 2)", c: "RURAL", g: "-16.64089151,-43.74647685"},
+        112: {a: "JARDIM ALEGRE", l: "JARDIM ALEGRE (FACELA)", c: "RURAL", g: "-16.705036,-43.792451"}
     };
 
     let activeId = null;
@@ -260,7 +324,8 @@
         Object.keys(cameras).sort((a,b) => parseFloat(a)-parseFloat(b)).forEach(id => {
             const cam = cameras[id];
             const btn = document.createElement('button');
-            btn.className = 'btn';
+            // Aplicar classe de estilo diferenciada para rural
+            btn.className = `btn ${cam.c === 'RURAL' ? 'btn-rural' : 'btn-urbano'}`;
             btn.dataset.cat = cam.c;
             btn.dataset.loc = cam.l;
             btn.dataset.apelido = cam.a;
@@ -304,14 +369,11 @@
         });
     }
 
-    // NOVA FUNÇÃO DE WHATSAPP
     function shareAction() {
         const cam = cameras[activeId];
         const linkMaps = `https://www.google.com/maps/search/?api=1&query=${cam.g}`;
         const mensagem = `POSTE ${activeId}: ${cam.l}\n\n📍 LOCALIZAÇÃO: ${linkMaps}`;
-        
-        const urlWa = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
-        window.open(urlWa, '_blank');
+        window.open(`https://wa.me/?text=${encodeURIComponent(mensagem)}`, '_blank');
     }
 
     function getDistance(lat1, lon1, lat2, lon2) {
