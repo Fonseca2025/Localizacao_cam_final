@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>GUARDIÃ PRO - SISTEMA</title>
+    <title>GUARDIÃ PRO - SISTEMA INTEGRADO</title>
     
     <!-- Leaflet Maps CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -17,7 +17,8 @@
             --verde-wa: #25D366; 
             --verde-maps: #34a853;
             --bg: #f2f2f7; 
-            --card: #ffffff; 
+            --card-urbano: #ffffff;
+            --card-rural: #FFFBEB;
             --texto: #1c1c1e;
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
@@ -44,7 +45,7 @@
         }
 
         .logo-container { padding: 10px 0 2px; }
-        .logo-img { height: 45px; width: auto; }
+        .logo-img { height: 50px; width: auto; }
 
         .search-area { padding: 5px 15px; width: 100%; max-width: 600px; display: flex; gap: 8px; }
         #searchBar {
@@ -72,20 +73,23 @@
         }
 
         .btn {
-            min-height: 105px; background: #ffffff; border: none; border-radius: 18px; 
+            min-height: 105px; border-radius: 18px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 10px 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            transition: transform 0.1s; cursor: pointer;
+            transition: transform 0.1s; cursor: pointer; border: none;
         }
+        .btn-urbano { background: var(--card-urbano); }
+        .btn-rural { background: var(--card-rural); border: 1px solid #E9D8A6; }
+
         .btn-num { font-size: 26px; font-weight: 900; color: var(--azul); margin-bottom: 4px; }
-        .btn-loc { font-size: 8px; font-weight: 800; color: #48484a; text-align: center; line-height: 1.2; }
+        .btn-loc { font-size: 8px; font-weight: 800; color: #48484a; text-align: center; line-height: 1.2; padding: 0 4px; }
         .btn-group-tag { font-size: 7px; background: var(--amarelo); color: var(--azul); padding: 2px 6px; border-radius: 4px; margin-top: 4px; font-weight: 900; }
 
-        .btn:active { transform: scale(0.94); background-color: #e5e5ea; }
+        .btn:active { transform: scale(0.94); opacity: 0.8; }
 
         /* MAPA */
         #map-container {
-            display: none; position: fixed; top: calc(var(--safe-top) + 185px); bottom: 60px;
+            display: none; position: fixed; top: calc(var(--safe-top) + 185px); bottom: calc(60px + var(--safe-bottom));
             width: 100%; z-index: 500;
         }
         #map { width: 100%; height: 100%; }
@@ -114,8 +118,21 @@
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
+        #modal-cat-tag { font-size: 10px; font-weight: 800; background: #f2f2f7; color: var(--azul); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 12px; letter-spacing: 1px; }
+        #modal-text { font-size: 18px; font-weight: 900; margin-bottom: 25px; line-height: 1.4; color: #000; }
+        
         .sub-points-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
         .sub-btn { background: #f2f2f7; border: 1px solid #ddd; padding: 15px; border-radius: 12px; font-weight: 800; color: var(--azul); text-align: left; display: flex; justify-content: space-between; }
+
+        .action-buttons { display: flex; flex-direction: column; gap: 10px; }
+        .m-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 16px; border-radius: 14px; border: none; font-weight: 800; font-size: 14px; color: white;
+            text-decoration: none;
+        }
+        .btn-maps { background: var(--verde-maps); }
+        .btn-wa { background: var(--verde-wa); }
+        .btn-close { background: transparent; color: #8e8e93; margin-top: 5px; }
 
         .hidden { display: none !important; }
     </style>
@@ -137,15 +154,12 @@
     </div>
 </header>
 
-<!-- VISÃO EM GRADE -->
 <div class="grid" id="mainGrid"></div>
 
-<!-- VISÃO EM MAPA -->
 <div id="map-container">
     <div id="map"></div>
 </div>
 
-<!-- NAVEGAÇÃO -->
 <nav class="bottom-nav">
     <button class="nav-item active" onclick="switchView('grid', this)">
         <span class="nav-icon">📱</span> GRADE
@@ -155,7 +169,6 @@
     </button>
 </nav>
 
-<!-- MODAL DE DETALHES / GRUPO -->
 <div id="modal" onclick="fechar()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div style="width: 40px; height: 5px; background: #e5e5ea; border-radius: 5px; margin: 0 auto 15px;"></div>
@@ -163,36 +176,151 @@
     </div>
 </div>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
     const cameras = {
+        // --- URBANAS (1-79) ---
         1: {a: "PÇA DR CARLOS", l: "PCA DR CARLOS FRENTE MIN FAZENDA", c: "CENTRO", g: "-16.722728,-43.865195"},
         2: {a: "PÇA DR CARLOS", l: "PCA DR CARLOS FRENTE COPASA", c: "CENTRO", g: "-16.7233637,-43.8653465"},
         3: {a: "DR. SANTOS / PE. AUGUSTO", l: "RUA DR. SANTOS X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7240059,-43.8653894"},
+        4: {a: "DR. SANTOS / D. PEDRO II", l: "RUA DR. SANTOS X RUA D. PEDRO II", c: "CENTRO", g: "-16.7249911,-43.8656682"},
+        5: {a: "DR. SANTOS / JOÃO PIMENTA", l: "RUA DR. SANTOS X RUAD. JOÃO PIMENTA", c: "CENTRO", g: "-16.7264145,-43.8659132"},
+        6: {a: "PÇA CEL. RIBEIRO", l: "PRAÇA CEL. RIBEIRO", c: "CENTRO", g: "-16.7271019,-43.8667055"},
+        7: {a: "CAMILO P. / D. PEDRO II", l: "RUA CAMILO P. X RUA D. PEDRO II", c: "CENTRO", g: "-16.72495,-43.8662154"},
+        8: {a: "CAMILO P. / PE. AUGUSTO", l: "RUA CAMILO P. X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7237787,-43.8660667"},
+        9: {a: "PÇA DR CARLOS/TIM", l: "PCA DR CARLOS", c: "CENTRO", g: "-16.7225366,-43.8658159"},
         10: {a: "RUA SAO FRANC / GOV. VALADARES", l: "RUA SÃO FRANCISCO. X RUA GOV. VALADARES", c: "CENTRO", g: "-16.7228943,-43.8642814"},
+        11: {a: "RUA SAO FRANC / CEL ANT ANJOS", l: "RUA SÃO FRANCISCO. X RUA CEL. ANT. D. ANJOS", c: "CENTRO", g: "-16.7233002,-43.864411"},
+        12: {a: "RUA SAO FRANC / RUI BARBOSA", l: "RUA SÃO FRANCISCO. X RUA RUI BARBOSA", c: "CENTRO", g: "-16.7236155,-43.8644671"},
+        13: {a: "RUA SAO FRANC / PE. AUGUSTO", l: "RUA SÃO FRANCISCO. X RUA PE. AUGUSTO", c: "CENTRO", g: "-16.7241608,-43.8645747"},
+        14: {a: "RUA SAO FRANC / D. PEDRO II", l: "RUA SÃO FRANCISCO. X RUA D. PEDRO II", c: "CENTRO", g: "-16.7252069,-43.8647858"},
+        15: {a: "PÇA PIO XII - CATEDRAL", l: "PCA PIO XII - CATEDRAL", c: "CENTRO", g: "-16.7254708,-43.8635566"},
+        16: {a: "RUA Joaquim Costa/Padre Augusto", l: "Joaquim Costa/Padre Augusto", c: "CENTRO", g: "-16.724295,-43.8639704"},
+        17: {a: "RUA JOAQ COSTA / CEL ANT ANJOS", l: "RUA CEL JOAQUIM COSTA X RUA CEL. ANT. DOS ANJOS", c: "CENTRO", g: "-16.7233586,-43.8637892"},
+        18: {a: "RUA JOAQ COSTA / VISC OURO PRETO", l: "RUA CEL JOAQUIM COSTA X RUA VISC. DE OURO PRETO", c: "CENTRO", g: "-16.7225996,-43.8635439"},
+        19: {a: "PRAÇA DE ESPORTES", l: "PRAÇA DE ESPORTES", c: "CENTRO", g: "-16.7214043,-43.8633808"},
+        20: {a: "AV DULCE SARM / FLAM WANDERLEY", l: "AV. DULCE SARMENTO. X FLAM. WANDERLEY", c: "CENTRO", g: "-16.7186891,-43.8597422"},
+        21: {a: "AV DULCE SARM / SEB D SOARES", l: "AV. DULCE SARMENTO. X SEB DIAS SOARES", c: "BAIRRO", g: "-16.7184532,-43.856777"},
+        22: {a: "AV DULCE SARM / FLORI NEIVA", l: "AV. DULCE SARMENTO. X FLORIANO NEIVA", c: "BAIRRO", g: "-16.7184455,-43.8541109"},
+        23: {a: "AV GER ATHAIDE / EST RODRIGUES", l: "AV. GERALDO ATHAIDE X AV. ESTEVES RODRIGUES", c: "BAIRRO", g: "-16.7177714,-43.8594945"},
+        24: {a: "AV GER ATHAIDE / DILSON GODINHO", l: "AV. GER ATHAIDE X RUA CEL JOSE ALVES", c: "BAIRRO", g: "-16.7164379,-43.8580461"},
+        25: {a: "AV GER ATHAIDE (LOTERICA)", l: "AV. GER ATHAIDE (CASA LOTERICA)", c: "BAIRRO", g: "-16.71552279,-43.8563751"},
         26: {a: "RUA SAO FRANC / FUNDO BRADESCO", l: "RUA SÃO FRANCISCO X RUA VISCONDE DE OURO PRETO", c: "CENTRO", g: "-16.72243590296203,-43.86421571530572"},
-        63: {a: "SAIDA JURAMENTO (PÓRTICO)", l: "SAIDA JURAMENTO (PÓRTICO)", c: "SAÍDA", g: "-16.749509,-43.828515"},
-        "63.1": {a: "SAIDA JURAMENTO (PONTALETE)", l: "SAIDA JURAMENTO (PONTALETE)", c: "SAÍDA", g: "-16.749392,-43.828265"},
+        27: {a: "PÇA MATRIZ / PROX BABI", l: "PRAÇA MATRIZ PROX BABI", c: "CENTRO", g: "-16.7211986,-43.865807"},
+        28: {a: "PÇA MATRIZ / CORREIOS", l: "RUA  FLORIA. NEIVA X RUA JUST. CÂMARA", c: "CENTRO", g: "-16.7205835,-43.8655594"},
+        29: {a: "PÇA ESPORTES / MEC", l: "AV. ARMENIO VELOSO X AV. FILOMENO RIBEIRO (PRACA DE ESPORTES)", c: "CENTRO", g: "-16.7209947,-43.8644949"},
+        30: {a: "PÇA ESPORTES / CANDANGO", l: "RUA PE. TEIXEIRA X AV. ARMENIO VELOSO (PRACA DE ESPORTES)", c: "CENTRO", g: "-16.7189659,-43.8632874"},
+        31: {a: "AV MARECHAL DEODORO / MEGA", l: "RUA MARECHAL DEODORO X AV. ARTUR BERNARDES", c: "CENTRO", g: "-16.7176466,-43.8631855"},
+        32: {a: "AV ESTEVES RODR / JOAO XXIII", l: "AV. DEP. ESTEVES RODR X JOAO XXIII", c: "BAIRRO", g: "-16.715677,-43.8633562"},
+        33: {a: "AV JOAO XXIII / ANTIGA UAI", l: "AV. JOAO XXIII ANTIGA UAI", c: "BAIRRO", g: "-16.7137079,-43.8637346"},
+        34: {a: "AV JOAO XXIII / PRESIDENTE KENNEDY", l: "AV. JOAO XXIII X AV. PRESIDENTE KENNEDY", c: "BAIRRO", g: "-16.7092412,-43.8654801"},
+        35: {a: "RUA DR VELOSO / D PEDRO II", l: "AV. DOUTOR VELOSO X DOM PEDRO II", c: "CENTRO", g: "-16.7247872,-43.8670288"},
+        36: {a: "AV PRES VARGAS / DR VELOSO", l: "AV. PRES. VARGAS X RUA DOUTOR VELOSO", c: "CENTRO", g: "-16.7233586,-43.8667716"},
+        37: {a: "AV GOV VALAD / CEL PRATES", l: "AV. GOV. VALAD. X AV. CEL. PRATES", c: "CENTRO", g: "-16.7223919,-43.8669699"},
+        38: {a: "RUA SIMEAO RIB / ALT FREITAS", l: "RUA SIMEAO RIBEIRO X RUA ALT FREITAS", c: "CENTRO", g: "-16.7224725,-43.8662136"},
+        39: {a: "RUA SIMEAO RIB / LAFETA", l: "RUA SIMEAO RIBEIRO X RUA LAFETA", c: "CENTRO", g: "-16.7219834,-43.8661073"},
+        40: {a: "RUA SANTA MARIA / INICIO", l: "AV.SANTA MARIA X RUA GONC FIGUEIRA", c: "CENTRO", g: "-16.7209822,-43.866872"},
+        41: {a: "RUA SANTA MARIA / ESTEVES R", l: "RUA SANTA MARIA X AV. DEP ESTEVES RODRIGUES", c: "CENTRO", g: "-16.720182,-43.869157"},
+        42: {a: "EST RODR / CASA ESFIRRA", l: "AV. DEP EST. RODRIGUES - CASA DA ESFIRRA", c: "CENTRO", g: "-16.7218961,-43.8718478"},
+        43: {a: "SANTA MARIA / S ANTONIO", l: "RUA SANTA MARIA X RUA SANTO ANTONIO", c: "BAIRRO", g: "-16.7177068,-43.8738467"},
+        44: {a: "RUA BARAO RIO BRANCO / PENA", l: "RUA BARÃO DO RIO BRANCO X AV. AFONSO PENA", c: "CENTRO", g: "-16.7264486,-43.8693346"},
+        45: {a: "HOSPITAL SANTA CASA", l: "AV. CEL PRATES PRAÇA STA CASA", c: "CENTRO", g: "-16.725157,-43.8699223"},
+        46: {a: "ALL TIME", l: "ALL TIME", c: "CENTRO", g: "-16.7275085,-43.8724411"},
+        47: {a: "PREF ANTIGA", l: "AV. DEP EST. RODRIGUES X PREFEITURA ANTIGA", c: "BAIRRO", g: "-16.7302097,-43.870764"},
+        48: {a: "CULA MANG / HOSP UNIV", l: "AV. CULA MANGABEIRA - HOSPITAL UNIVERSITARIO", c: "BAIRRO", g: "-16.7333356,-43.8721867"},
+        49: {a: "AV CULA MANG / S EXPEDITO", l: "AV. CULA MANGABEIRA X RUA JOAO REBELO", c: "BAIRRO", g: "-16.7370395,-43.872122"},
+        50: {a: "TREVO RODOV / BB", l: "TREVO RODOVIARIA BANCO BRASIL", c: "BAIRRO", g: "-16.7399357,-43.8718982"},
+        51: {a: "RODOV / DROGASIL", l: "RODOVIARIA DROGASIL", c: "BAIRRO", g: "-16.7416469,-43.8681328"},
+        52: {a: "GAETANI / CASTELAR", l: "AV. FCO GAETANI X CASTELAR PRATES", c: "BAIRRO", g: "-16.7508975,-43.8787849"},
+        53: {a: "PARQUE EXPOS / L FERREA", l: "PARQ. DE EXPOS X LINHA FERREA", c: "BAIRRO", g: "-16.71179,-43.85011"},
+        54: {a: "LAGOA INTERLAGOS", l: "LAGOA DE INTERLAGOS", c: "BAIRRO", g: "-16.70566,-43.83723"},
+        55: {a: "TREVO DA SION", l: "TREVO DA SION", c: "BAIRRO", g: "-16.71773740930767,-43.84412012153269"},
+        56: {a: "TREVO MOTEIS", l: "TREVO MOTÉIS", c: "TREVO", g: "-16.74588,-43.84645"},
+        57: {a: "ROTATORIA MAJOR PRATES / BH", l: "TREVO MAJOR PRATES - PARQUE", c: "BAIRRO", g: "-16.7548,-43.88137"},
+        58: {a: "AV JOAO XXIII / PADRE FAB", l: "AV.JOÃO XXIII X RUA PADRE FABIANO", c: "BAIRRO", g: "-16.70363,-43.86758"},
+        59: {a: "TREVO INDUSTRIAS", l: "TREVO INDUSTRIAS", c: "TREVO", g: "-16.68953,-43.87299"},
+        60: {a: "SAIDA BR365/LA SUITE", l: "SAIDA BR365 / LA SUITE", c: "SAÍDA", g: "-16.679863,-43.878507"},
+        61: {a: "ESTRADA PRODUCAO", l: "ESTRADA DA PRODUCAO", c: "SAÍDA", g: "-16.687439,-43.818350"},
+        62: {a: "TREVO CATOPE", l: "SAIDA BR251 (CATOPE)", c: "SAÍDA", g: "-16.678786,-43.801228"},
+        63: {a: "SAIDA JURAMENTO", l: "SAIDA JURAMENTO", c: "SAÍDA", g: "-16.749509,-43.828515"},
+        "63.1": {a: "SAIDA JURAMENTO", l: "SAIDA JURAMENTO", c: "SAÍDA", g: "-16.749392,-43.828265"},
+        64: {a: "SAIDA BH", l: "PORTICO SAIDA BH", c: "SAÍDA", g: "-16.758046,-43.844052"},
+        65: {a: "SAIDA BH", l: "SAIDA BH", c: "SAÍDA", g: "-16.757316,-43.844565"},
+        66: {a: "SAIDA PIRAPORA", l: "SAIDA PARA PIRAPORA", c: "TREVO", g: "-16.76479,-43.88387"},
+        67: {a: "RODOVIARIA FRENTE", l: "RODOVIARIA FRENTE", c: "BAIRRO", g: "-16.74244,-43.86836"},
+        68: {a: "ROTATORIA AV. VICENTE GUIMARAES", l: "ROTATORIA AV. VICENTE GUIMARAES", c: "BAIRRO", g: "-16.74643,-43.87128"},
+        69: {a: "AV. DEP. PLINIO RIB / CEL L MAIA", l: "AV. DEP PLINIO RIBEIRO X AV. CEL LUIZ MAIA", c: "BAIRRO", g: "-16.73092,-43.84588"},
+        70: {a: "PREFEITURA NOVA", l: "PREFEITURA NOVA", c: "BAIRRO", g: "-16.70218,-43.82876"},
+        71: {a: "TREVO TROPEIROS", l: "TREVO TROPEIROS", c: "TREVO", g: "-16.69636,-43.81921"},
+        72: {a: "PARQUE MUNICIPAL ROTATÓRIA", l: "ROTATÓRIA PARQUE MUNICIPAL", c: "BAIRRO", g: "-16.751554,-43.885485"},
+        73: {a: "PRACA JATOBAS", l: "PRAÇA DOS JATOBÁS", c: "BAIRRO", g: "-16.736027,-43.881099"},
+        74: {a: "MERCADO MUNICIPAL", l: "MERCADO MUNICIPAL", c: "CENTRO", g: "-16.716735,-43.865941"},
+        75: {a: "PONTO CERTO/RISP", l: "PONTO CERTO/RISP", c: "BAIRRO", g: "-16.724237,-43.881184"},
+        76: {a: "INTERIOR PREFEITURA NOVA", l: "INTERIOR PREFEITURA NOVA", c: "BAIRRO", g: "-16.700183,-43.827333"},
+        77: {a: "PRACA SAO JOSÉ", l: "PRAÇA SAO JOSÉ", c: "BAIRRO", g: "-16.721257,-43.858207"},
+        78: {a: "RODOVIÁRIA EMBARQUE ", l: "RODOVIÁRIA EMBARQUE", c: "BAIRRO", g: "-16.743192,-43.868424"},
         79: {a: "CEANORTE", l: "CEANORTE", c: "BAIRRO", g: "-16.757292, -43.847177"},
-        // --- RURAIS COM AGRUPAMENTO ---
+
+        // --- RURAIS (80-112) ---
+        80: {a: "EUROFARMA", l: "EUROFARMA", c: "RURAL", g: "-16.642387,-43.814704"},
+        81: {a: "EST. PRODUÇÃO", l: "ESTRADA DA PRODUÇÃO", c: "RURAL", g: "-16.611291,-43.803569"},
+        82: {a: "EST. PRODUÇÃO", l: "ESTRADA DA PRODUÇÃO", c: "RURAL", g: "-16.521160,-43.776100"},
+        83: {a: "TABÚAS", l: "TABÚAS", c: "RURAL", g: "-16.501512,-43.778137"},
+        84: {a: "EST. PRODUÇÃO", l: "ESTRADA DA PRODUÇÃO", c: "RURAL", g: "-16.469504,-43.782591"},
+        85: {a: "RIO CANABRAVA", l: "RIO CANABRAVA", c: "RURAL", g: "-16.432138,-43.792380"},
+        86: {a: "TREVO CAP. ENÉAS", l: "TREVO CAPITÃO ENÉAS", c: "RURAL", g: "-16.344426,-43.808357"},
+        87: {a: "TREVO FAZ BENGO", l: "TREVO FAZENDA BENGO", c: "RURAL", g: "-16.340757,-43.812174"},
+        88: {a: "EST. PRODUÇÃO", l: "ESTRADA DA PRODUÇÃO", c: "RURAL", g: "-16.192591,-43.863059"},
         "89.1": {a: "S. PEDRO DA GARÇA", l: "SÃO PEDRO DA GARÇA (PONTO 1)", c: "RURAL", g: "-16.174354,-43.865721"},
         "89.2": {a: "S. PEDRO DA GARÇA", l: "SÃO PEDRO DA GARÇA (PONTO 2)", c: "RURAL", g: "-16.171364,-43.864249"},
         "89.3": {a: "S. PEDRO DA GARÇA", l: "SÃO PEDRO DA GARÇA (PONTO 3)", c: "RURAL", g: "-16.170329,-43.866304"},
+        "90.1": {a: "APAR. MUNDO NOVO", l: "APARECIDA DO MUNDO NOVO (PONTO 1)", c: "RURAL", g: "-16.115268,-43.924987"},
+        "90.2": {a: "APAR. MUNDO NOVO", l: "APARECIDA DO MUNDO NOVO (PONTO 2)", c: "RURAL", g: "-16.115054,-43.926347"},
+        "90.3": {a: "APAR. MUNDO NOVO", l: "APARECIDA DO MUNDO NOVO (PONTO 3)", c: "RURAL", g: "-16.113743,-43.928035"},
+        91: {a: "SAMAMBAIA", l: "SAMAMBAIA", c: "RURAL", g: "-16.449941,-43.825683"},
+        92: {a: "RECANTO VITÓRIA", l: "CHÁCARA RECANTO VITÓRIA", c: "RURAL", g: "-16.752197,-43.804778"},
+        93: {a: "PONTA DO MORRO", l: "PONTO 17 (PONTA DO MORRO)", c: "RURAL", g: "-16.760907,-43.759043"},
         "94.1": {a: "VIASOLO AMB.", l: "VIASOLO ENGENHARIA AMBIENTAL S.A. (PONTO 1)", c: "RURAL", g: "-16.80261,-43.74253"},
         "94.2": {a: "VIASOLO AMB.", l: "VIASOLO ENGENHARIA AMBIENTAL S.A. (PONTO 2)", c: "RURAL", g: "-16.802308,-43.742994"},
         "94.3": {a: "VIASOLO AMB.", l: "VIASOLO ENGENHARIA AMBIENTAL S.A. (PONTO 3)", c: "RURAL", g: "-16.802445,-43.742443"},
+        95: {a: "SÃO GERALDO 2", l: "ENTRADA SÃO GERALDO 2", c: "RURAL", g: "-16.788269,-43.893355"},
+        96: {a: "POSTO BARRAL 2", l: "POSTO BARRAL 2", c: "RURAL", g: "-16.826247,-43.923740"},
+        "97.1": {a: "CANTO DO ENGENHO", l: "ENTRADA CANTO DO ENGENHO", c: "RURAL", g: "-16.856596,-44.053928"},
+        "97.2": {a: "CANTO DO ENGENHO", l: "CANTO DO ENGENHO", c: "RURAL", g: "-16.908136,-44.072303"},
+        98: {a: "CALHAU", l: "CALHAU", c: "RURAL", g: "-16.669662,-44.098596"},
+        99: {a: "PRÓX. TIM BAR", l: "PRÓXIMO A TIM BAR", c: "RURAL", g: "-16.623283,-43.904545"},
         "100.1": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 1)", c: "RURAL", g: "-16.591795,-43.939539"},
         "100.2": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 2)", c: "RURAL", g: "-16.583996,-43.938143"},
         "100.3": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 3)", c: "RURAL", g: "-16.583171,-43.939690"},
         "100.4": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 4)", c: "RURAL", g: "-16.579846,-43.939828"},
-        "100.5": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 5)", c: "RURAL", g: "-16.581552,-43.932128"}
+        "100.5": {a: "NOVA ESPERANÇA", l: "NOVA ESPERANÇA (PONTO 5)", c: "RURAL", g: "-16.581552,-43.932128"},
+        101: {a: "VALE DOS IPÊS", l: "VALE DOS IPÊS", c: "RURAL", g: "-16.479465,-43.974594"},
+        "102.1": {a: "ERMIDINHA", l: "ERMIDINHA (PONTO 1)", c: "RURAL", g: "-16.43059675,-44.08853091"},
+        "102.2": {a: "ERMIDINHA", l: "ERMIDINHA (PONTO 2)", c: "RURAL", g: "-16.4266182,-44.0924281"},
+        "102.3": {a: "ERMIDINHA", l: "ERMIDINHA (PONTO 3)", c: "RURAL", g: "-16.43292418,-44.09072828"},
+        "103.1": {a: "PEDRA PRETA", l: "PEDRA PRETA (PONTO 1)", c: "RURAL", g: "-16.39722883,-44.14695701"},
+        "103.2": {a: "PEDRA PRETA", l: "PEDRA PRETA (PONTO 2)", c: "RURAL", g: "-16.400718843,-44.14853375"},
+        "104.1": {a: "SÃO JOÃO VEREDA", l: "SÃO JOÃO DA VEREDA (PONTO 1)", c: "RURAL", g: "-16.70047253,-44.11459909"},
+        "104.2": {a: "SÃO JOÃO VEREDA", l: "SÃO JOÃO DA VEREDA (PONTO 2)", c: "RURAL", g: "-16.7015584,-44.1149828"},
+        "104.3": {a: "SÃO JOÃO VEREDA", l: "SÃO JOÃO DA VEREDA (PONTO 3)", c: "RURAL", g: "-16.70247821,-44.11426749"},
+        105: {a: "MIRALTA", l: "MIRALTA", c: "RURAL", g: "-16.531680,-43.902958"},
+        "106.1": {a: "VILA NOVA", l: "VILA NOVA (PONTO 1)", c: "RURAL", g: "-16.45935982,-43.8667636"},
+        "106.2": {a: "VILA NOVA", l: "VILA NOVA (PONTO 2)", c: "RURAL", g: "-16.46081509,-43.86767028"},
+        107: {a: "PANORÂMICA", l: "PANORÂMICA", c: "RURAL", g: "-16.37363208,-43.99631106"},
+        "108.1": {a: "SANTA ROSA DE LIMA", l: "SANTA ROSA DE LIMA (PONTO 1)", c: "RURAL", g: "-16.35390007,-43.96595007"},
+        "108.2": {a: "SANTA ROSA DE LIMA", l: "SANTA ROSA DE LIMA (PONTO 2)", c: "RURAL", g: "-16.34711459,-43.96330343"},
+        "108.3": {a: "SANTA ROSA DE LIMA", l: "SANTA ROSA DE LIMA (PONTO 3)", c: "RURAL", g: "-16.345021,-43.963812"},
+        109: {a: "LAGOINHA", l: "LAGOINHA", c: "RURAL", g: "-16.879488,-43.862873"},
+        "110.1": {a: "PLANALTO", l: "PLANALTO", c: "RURAL", g: "-16.895852,-43.867733"},
+        "110.2": {a: "PLANALTO PONTALETE", l: "PONTALETE", c: "RURAL", g: "-16.896464,-43.867820"},
+        "111.1": {a: "CAMPOS ELÍSIOS", l: "CAMPOS ELÍSIOS (PONTO 1)", c: "RURAL", g: "-16.6623081,-43.76734181"},
+        "111.2": {a: "CAMPOS ELÍSIOS", l: "CAMPOS ELÍSIOS (PONTO 2)", c: "RURAL", g: "-16.64089151,-43.74647685"},
+        112: {a: "JARDIM ALEGRE", l: "JARDIM ALEGRE (FACELA)", c: "RURAL", g: "-16.705036,-43.792451"}
     };
 
-    let map, markers = [];
+    let map, activeId = null;
 
-    // ORGANIZAÇÃO DOS DADOS (AGRUPAMENTO)
     function getGroupedData() {
         const groups = {};
         Object.keys(cameras).forEach(id => {
@@ -214,7 +342,7 @@
             const main = items[0];
 
             const btn = document.createElement('button');
-            btn.className = 'btn';
+            btn.className = `btn ${main.c === 'RURAL' ? 'btn-rural' : 'btn-urbano'}`;
             btn.onclick = () => isGroup ? showSubMenu(baseId) : ver(main.id);
             btn.innerHTML = `
                 <span class="btn-num">${baseId}</span>
@@ -237,25 +365,27 @@
                         <span style="font-size:10px; opacity:0.7;">➔</span>
                      </button>`;
         });
-        html += `</div><button class="close-btn" onclick="fechar()" style="margin-top:20px; width:100%;">CANCELAR</button>`;
+        html += `</div><button class="btn-close" onclick="fechar()" style="margin-top:20px; width:100%;">CANCELAR</button>`;
         
         document.getElementById('modal-content-area').innerHTML = html;
         document.getElementById('modal').style.display = "flex";
     }
 
     function ver(id) {
+        activeId = id;
         const cam = cameras[id];
         let html = `
             <div id="modal-cat-tag">${cam.c}</div>
             <div id="modal-text">POSTE ${id}: ${cam.l}</div>
             <div class="action-buttons">
                 <a href="https://www.google.com/maps/search/?api=1&query=${cam.g}" class="m-btn btn-maps" target="_blank">📍 ABRIR NO GOOGLE MAPS</a>
-                <button class="m-btn btn-wa" onclick="shareAction('${id}')">💬 ENVIAR PELO WHATSAPP</button>
-                <button class="close-btn" onclick="fechar()">VOLTAR</button>
+                <button class="m-btn btn-wa" onclick="shareAction()">💬 ENVIAR PELO WHATSAPP</button>
+                <button class="btn-close" onclick="fechar()">VOLTAR</button>
             </div>
         `;
         document.getElementById('modal-content-area').innerHTML = html;
         document.getElementById('modal').style.display = "flex";
+        if(navigator.vibrate) navigator.vibrate(50);
     }
 
     function switchView(view, el) {
@@ -283,17 +413,18 @@
             const cam = cameras[id];
             const [lat, lon] = cam.g.split(',').map(Number);
             const marker = L.marker([lat, lon]).addTo(map);
-            marker.bindPopup(`<b>POSTE ${id}</b><br>${cam.a}<br><button onclick="ver('${id}')" style="margin-top:5px; font-size:10px;">DETALHES</button>`);
+            marker.bindPopup(`<b>POSTE ${id}</b><br>${cam.a}<br><button onclick="ver('${id}')" style="margin-top:5px; font-size:10px; padding:5px; border:none; background:var(--azul); color:white; border-radius:5px;">DETALHES</button>`);
         });
     }
 
-    function shareAction(id) {
-        const cam = cameras[id];
-        const msg = `POSTE ${id}: ${cam.l}\n\n📍 LOCALIZAÇÃO: https://www.google.com/maps/search/?api=1&query=${cam.g}`;
+    function shareAction() {
+        const cam = cameras[activeId];
+        const msg = `POSTE ${activeId}: ${cam.l}\n\n📍 LOCALIZAÇÃO: https://www.google.com/maps/search/?api=1&query=${cam.g}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function fechar() { document.getElementById('modal').style.display = "none"; }
+    
     function handleSearch() {
         const t = document.getElementById('searchBar').value.toUpperCase();
         document.querySelectorAll('.btn').forEach(b => {
@@ -301,6 +432,7 @@
             b.classList.toggle('hidden', !match);
         });
     }
+
     function filtrarCat(cat, el) {
         document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
